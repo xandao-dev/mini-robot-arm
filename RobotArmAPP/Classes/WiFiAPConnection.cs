@@ -139,8 +139,3 @@ namespace RobotArmAPP
         } //Tries to Disconnect the Wifi
     }
 }
-
-//false,false => verifica se esta conectado
-//true,false => disconectado
-//false,true => conectando
-//true,true => conectando

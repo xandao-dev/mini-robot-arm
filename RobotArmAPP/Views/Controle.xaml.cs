@@ -1132,7 +1132,7 @@ namespace RobotArmAPP.Views
         private async void LoadJsonTimer_Tick(object sender, object e)
         {
             //Thread.Sleep(700);
-            await LoadJsonSaved();
+            //await LoadJsonSaved();
 
             //Thread.Sleep(1000);
             loadJsonTimer.Stop();

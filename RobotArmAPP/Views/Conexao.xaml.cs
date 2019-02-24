@@ -23,7 +23,6 @@ namespace RobotArmAPP.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             wiFiAPConnection.RequestWifiAcess();
-            //await wiFiAPConnection.GetNetworkProfiles(true);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -35,23 +34,21 @@ namespace RobotArmAPP.Views
 
         private async void BTN_Conectar_Click(object sender, RoutedEventArgs e)
         {
+
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
+            WifiCheckerTimer.Stop();
             BTN_Conectar.IsEnabled = false;
             BTN_Desconectar.IsEnabled = false;
 
             if (await wiFiAPConnection.GetNetworkProfiles(true, true) == false)
             {
-                //wifiAdapter.Disconnect();
                 int status = await wiFiAPConnection.WifiStatus(false, true);
                 TextAndColor(status);
-                //Thread.Sleep(250);
                 await wiFiAPConnection.ConnectToWifi();
             }
 
             try
             {
-                //var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
-                //MudarTexto(connectedProfile, 0);
                 int status = await wiFiAPConnection.WifiStatus(false, false);
                 bool connected = await wiFiAPConnection.GetNetworkProfiles(true, false);
                 await wiFiAPConnection.WifiStatus(connected, true);
@@ -59,12 +56,12 @@ namespace RobotArmAPP.Views
             }
             catch
             {
-                //MudarTexto(null, 2);
                 int status = await wiFiAPConnection.WifiStatus(true, false);
                 TextAndColor(status);
             }
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+            WifiCheckerTimer.Start();
             BTN_Conectar.IsEnabled = true;
             BTN_Desconectar.IsEnabled = true;
         } //chama ConectarWifi, MudarTexto
@@ -76,27 +73,20 @@ namespace RobotArmAPP.Views
             BTN_Desconectar.IsEnabled = false;
             try
             {
-                //var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();//verifica se tem wifi conectado e qual
                 bool networkNotNull = await wiFiAPConnection.GetNetworkProfiles(false, false);
                 if (networkNotNull == true)
                 {
-                    //wifiAdapter.Disconnect(); //desconecta o wifi
-                    //MudarTexto(null, 2); //altera o status
                     wiFiAPConnection.DisconnectWifi();
                     int status = await wiFiAPConnection.WifiStatus(true, false);
                     TextAndColor(status);
                 }
                 else
                 {
-                    //MudarTexto(connectedProfile, 0); //altera o status
                     int status = await wiFiAPConnection.WifiStatus(false, false);
                     TextAndColor(status);
                 }
             }
-            catch
-            {
-                //MudarTexto(null, 2);
-            }
+            catch { }
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
             BTN_Conectar.IsEnabled = true;
             BTN_Desconectar.IsEnabled = true;
@@ -126,7 +116,5 @@ namespace RobotArmAPP.Views
             int status = await wiFiAPConnection.WifiStatus(false, false);
             TextAndColor(status);
         }
-
-
     }
 }
