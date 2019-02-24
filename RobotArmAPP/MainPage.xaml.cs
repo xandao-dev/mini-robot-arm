@@ -36,7 +36,7 @@ namespace RobotArmAPP
             }
         }
 
-        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             MenuGrid_Tapped(null, null);
             verificarConexao.FirstScan();
@@ -78,7 +78,6 @@ namespace RobotArmAPP
         private void Timer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
             verificarConexao.WifiStatus();
-            //Thread.Sleep(10);
             MudarTexto();
         }
     }
