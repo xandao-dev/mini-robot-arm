@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
+
 namespace RobotArmAPP
 {
     public sealed partial class MainPage : Page
@@ -17,7 +18,7 @@ namespace RobotArmAPP
         private DispatcherTimer timer;
         public static ListView MenuBlocker { get; set; }
 
-        VerificarConexao verificarConexao = new VerificarConexao();
+        WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
 
         public MainPage()
         {
@@ -62,7 +63,7 @@ namespace RobotArmAPP
 
         public void MudarTexto() //esse metodo pega informações da classe VerificarConexão e muda o Status Global do Wifi
         {
-            if (verificarConexao.Status == 1)
+            if (verificarConexao.Connected == true)
             {
                 TXT_StatusGlobal.Text = "Connected";
                 TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
@@ -77,7 +78,7 @@ namespace RobotArmAPP
 
         private void Timer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
-            verificarConexao.WifiStatus();
+            verificarConexao.GetNetworkProfiles();
             MudarTexto();
         }
     }

@@ -1064,7 +1064,7 @@ namespace RobotArmAPP.Views
         private void Timer_Tick(object sender, object e)
         {
 
-            verificarConexao.WifiStatus();
+            verificarConexao.GetNetworkProfiles();
             //await Task.Delay(Convert.ToInt32(RefreshRateBox.Text));
             ConexaoStatus = verificarConexao.CallStatus();
             if (ConexaoStatus == 1 && playing != true && changingControls != true)

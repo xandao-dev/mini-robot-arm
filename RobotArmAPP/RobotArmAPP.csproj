@@ -103,7 +103,7 @@
     </Compile>
     <Compile Include="Models\MenuItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classes\VerificarConexao.cs" />
+    <Compile Include="Classes\WiFiAPConnection.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\Conexao.xaml.cs">
