@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe UI">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe UI" Loaded="Page_Loaded">
 
     <Page.Resources>
         <Style TargetType="Slider" x:Key="SliderStyle1">
@@ -1104,6 +1104,5 @@
 
         </Grid>
         <Image Margin="980,520,0,0" Source="/Assets/UTFPR1.png" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>
-        <TextBlock x:Name="DisconnectedText" HorizontalAlignment="Left" Margin="425,532,0,0" Text="Disconnected" TextWrapping="Wrap" VerticalAlignment="Top" Height="113" Width="452" Foreground="Red" FontSize="72" Visibility="Collapsed"/>
     </Grid>
 </Page>

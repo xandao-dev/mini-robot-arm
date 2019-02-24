@@ -1,6 +1,5 @@
 ﻿using RobotArmAPP.Models;
 using System;
-using System.Threading;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -15,7 +14,7 @@ namespace RobotArmAPP
 {
     public sealed partial class MainPage : Page
     {
-        private DispatcherTimer timer;
+        private DispatcherTimer WifiCheckerTimer;
         public static ListView MenuBlocker { get; set; }
 
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
@@ -23,9 +22,10 @@ namespace RobotArmAPP
         public MainPage()
         {
             this.InitializeComponent();
-            MenuBlocker = LeftMenu;
-            timer = new DispatcherTimer();
             this.Loaded += MainPage_Loaded;
+            MenuBlocker = LeftMenu;
+
+            WifiCheckerTimer = new DispatcherTimer();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e) //Define o tamanho minimo do aplicativo -> Page_SizeChanged está definido no xaml
@@ -40,13 +40,12 @@ namespace RobotArmAPP
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             MenuGrid_Tapped(null, null);
-            verificarConexao.FirstScan();
-            Thread.Sleep(250);
-            MudarTexto();
 
-            timer.Interval = TimeSpan.FromSeconds(1.0); //começa o timer
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            wiFiAPConnection.RequestWifiAcess();
+
+            WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
+            WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(500.0);
+            WifiCheckerTimer.Start();
         }
 
         private async void MenuGrid_Tapped(object sender, TappedRoutedEventArgs e)
@@ -61,25 +60,29 @@ namespace RobotArmAPP
             }
         }
 
-        public void MudarTexto() //esse metodo pega informações da classe VerificarConexão e muda o Status Global do Wifi
+        private void TextAndColor(int status)
         {
-            if (verificarConexao.Connected == true)
-            {
-                TXT_StatusGlobal.Text = "Connected";
-                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
-            }
-            else
+            if (status == 0)
             {
                 TXT_StatusGlobal.Text = "Disconnected";
                 TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
             }
-            TXT_StatusGlobal.Visibility = Visibility.Visible;
+            else if (status == 1)
+            {
+                TXT_StatusGlobal.Text = "Connected";
+                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
+            }
+            else if (status == 2)
+            {
+                TXT_StatusGlobal.Text = "Connecting";
+                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.DarkOrange);
+            }
         }
 
-        private void Timer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
+        private async void WifiCheckerTimer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
-            verificarConexao.GetNetworkProfiles();
-            MudarTexto();
+            int status = await wiFiAPConnection.WifiStatus(false, false);
+            TextAndColor(status);
         }
     }
 }

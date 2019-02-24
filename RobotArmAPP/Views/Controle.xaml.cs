@@ -38,11 +38,11 @@ namespace RobotArmAPP.Views
         #endregion
 
         #region INSTANCE FIELDS
-        private DispatcherTimer timer;
+        private DispatcherTimer WifiCheckerTimer;
         private DispatcherTimer playbackTimer;
         private DispatcherTimer loadJsonTimer;
 
-        private VerificarConexao verificarConexao = new VerificarConexao();
+        WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
         #endregion
 
         #region INITIALIZATION
@@ -50,12 +50,7 @@ namespace RobotArmAPP.Views
         {
             this.InitializeComponent();
 
-            verificarConexao.FirstScan();
-
-            timer = new DispatcherTimer();
-            timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromMilliseconds(100.0);
-            timer.Start();
+            WifiCheckerTimer = new DispatcherTimer();
 
             playbackTimer = new DispatcherTimer();
             playbackTimer.Tick += PlaybackTimer_Tick;
@@ -68,6 +63,7 @@ namespace RobotArmAPP.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            wiFiAPConnection.RequestWifiAcess();
             //btn_Click(this, new RoutedEventArgs());
             //LoadJsonSaved();
 
@@ -76,6 +72,13 @@ namespace RobotArmAPP.Views
                 await ReadyToSend(200);
             }
             catch { }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
+            WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(250.0);
+            WifiCheckerTimer.Start();
         }
         #endregion
 
@@ -1061,34 +1064,26 @@ namespace RobotArmAPP.Views
         #endregion
 
         #region TIMERS
-        private void Timer_Tick(object sender, object e)
+        private async void WifiCheckerTimer_Tick(object sender, object e)
         {
+            int status = await wiFiAPConnection.WifiStatus(false, false);
 
-            verificarConexao.GetNetworkProfiles();
-            //await Task.Delay(Convert.ToInt32(RefreshRateBox.Text));
-            ConexaoStatus = verificarConexao.CallStatus();
-            if (ConexaoStatus == 1 && playing != true && changingControls != true)
+            if (status == 1 && playing != true && changingControls != true)
             {
                 Blocker1.Visibility = Visibility.Collapsed;
                 Blocker2.Visibility = Visibility.Collapsed;
                 Blocker3.Visibility = Visibility.Collapsed;
+            }
+            else if (status != 1)
+            {
+                Canvas.SetZIndex(StopPlayback, 1);
+                Canvas.SetZIndex(Blocker2, 2);
             }
             else
             {
                 /* Blocker1.Visibility = Visibility.Visible;
                  Blocker2.Visibility = Visibility.Visible;
                  Blocker3.Visibility = Visibility.Visible;*/
-            }
-
-            if (ConexaoStatus == 1)
-            {
-                DisconnectedText.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                DisconnectedText.Visibility = Visibility.Visible;
-                Canvas.SetZIndex(StopPlayback, 1);
-                Canvas.SetZIndex(Blocker2, 2);
             }
 
             QuantidadeItens.Text = Convert.ToString(framesList.Count);

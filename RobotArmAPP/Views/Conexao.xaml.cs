@@ -1,7 +1,8 @@
-﻿using System.Threading;
+﻿using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace RobotArmAPP.Views
@@ -9,119 +10,28 @@ namespace RobotArmAPP.Views
 
     public sealed partial class Conexao : Page
     {
+        private DispatcherTimer WifiCheckerTimer;
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
 
         public Conexao()
         {
             this.InitializeComponent();
+
+            WifiCheckerTimer = new DispatcherTimer();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             wiFiAPConnection.RequestWifiAcess();
             //await wiFiAPConnection.GetNetworkProfiles(true);
         }
 
-        /*private async Task<string> VerificarAP(int conexaoAplicativoOK)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            HttpClient cliente = new HttpClient();
-            HttpResponseMessage response = new HttpResponseMessage();
-            string resultado = await cliente.GetStringAsync("http://10.10.10.10/?param=" + conexaoAplicativoOK);
-            string statusCode = response.StatusCode.ToString(); // Retorna "OK" quando da certo
-            return statusCode;
-        }*/
-
-        /*private async Task<bool> ConectadoRedeCerta()
-        {
-            try
-            {
-                var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
-                return (connectedProfile != null && connectedProfile.ProfileName == SSID);
-            }
-            catch
-            {
-                var dialog = new MessageDialog("Check your WiFi network adapter!", "Error");
-                await dialog.ShowAsync();
-                MudarTexto(null, 2);
-                return false;
-            }
-        }*/
-
-        /*private async Task<int> ConectarWifi()
-        {
-            try
-            {
-                var result = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
-                if (result.Count >= 1)
-                {
-                    wifiAdapter = await WiFiAdapter.FromIdAsync(result[0].Id);
-                    await wifiAdapter.ScanAsync();// escaneando redes
-
-                    var nw = wifiAdapter.NetworkReport.AvailableNetworks.Where(y => y.Ssid == SSID).FirstOrDefault(); //verificando a rede
-                    var credential = new PasswordCredential //senha
-                    {
-                        Password = Senha
-                    };
-
-                    WiFiReconnectionKind reconnectionKind = WiFiReconnectionKind.Automatic; //tipo de conexao
-
-                    await wifiAdapter.ConnectAsync(nw, reconnectionKind, credential); //a conexao
-                }
-
-            }
-            catch
-            {
-                var dialog = new MessageDialog("Verifique seu adaptador de rede WiFi e o Access Point do Braço Robótico!", "Erro");
-                await dialog.ShowAsync();
-                MudarTexto(null, 2);
-            }
-            return 1;
-        }*/
-
-        /*public async void MudarTexto(ConnectionProfile redeAtual, byte tipo)
-        {
-             
-             //* 0: conectado ou desconectado
-             //* 1: conectando      -> parametro 1 null
-             //* 2 ou outro: desconectado   -> parametro 1 null
-
-            TXT_Status.Visibility = Visibility.Visible;
-            if (tipo == 0)
-            {
-                if (redeAtual != null && redeAtual.ProfileName == SSID)
-                {
-                    try
-                    {
-                        string code = await VerificarAP(200);
-                        if (code == "OK")
-                        {
-                            TXT_Status.Text = "Connected";
-                            TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
-                        }
-                    }
-                    catch
-                    {
-                        TXT_Status.Text = "Disconnected";
-                        TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
-                    }
-                }
-                else
-                {
-                    TXT_Status.Text = "Disconnected";
-                    TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
-                }
-            }
-            else if (tipo == 1)
-            {
-                TXT_Status.Text = "Connecting";
-                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.DarkOrange);
-            }
-            else
-            {
-                TXT_Status.Text = "Disconnected";
-                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
-            }
-        }*/
+            WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
+            WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(250);
+            WifiCheckerTimer.Start();
+        }
 
         private async void BTN_Conectar_Click(object sender, RoutedEventArgs e)
         {
@@ -129,11 +39,12 @@ namespace RobotArmAPP.Views
             BTN_Conectar.IsEnabled = false;
             BTN_Desconectar.IsEnabled = false;
 
-            if (await wiFiAPConnection.GetNetworkProfiles(true) == false)
+            if (await wiFiAPConnection.GetNetworkProfiles(true, true) == false)
             {
                 //wifiAdapter.Disconnect();
-                //MudarTexto(null, 1);
-                Thread.Sleep(250);
+                int status = await wiFiAPConnection.WifiStatus(false, true);
+                TextAndColor(status);
+                //Thread.Sleep(250);
                 await wiFiAPConnection.ConnectToWifi();
             }
 
@@ -141,16 +52,22 @@ namespace RobotArmAPP.Views
             {
                 //var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
                 //MudarTexto(connectedProfile, 0);
+                int status = await wiFiAPConnection.WifiStatus(false, false);
+                bool connected = await wiFiAPConnection.GetNetworkProfiles(true, false);
+                await wiFiAPConnection.WifiStatus(connected, true);
+                TextAndColor(status);
             }
             catch
             {
                 //MudarTexto(null, 2);
+                int status = await wiFiAPConnection.WifiStatus(true, false);
+                TextAndColor(status);
             }
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
             BTN_Conectar.IsEnabled = true;
             BTN_Desconectar.IsEnabled = true;
-        }
+        } //chama ConectarWifi, MudarTexto
 
         private async void BTN_Desconectar_Click(object sender, RoutedEventArgs e)
         {
@@ -159,16 +76,22 @@ namespace RobotArmAPP.Views
             BTN_Desconectar.IsEnabled = false;
             try
             {
-                /*var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();//verifica se tem wifi conectado e qual
-                if (connectedProfile != null)
+                //var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();//verifica se tem wifi conectado e qual
+                bool networkNotNull = await wiFiAPConnection.GetNetworkProfiles(false, false);
+                if (networkNotNull == true)
                 {
-                    wifiAdapter.Disconnect(); //desconecta o wifi
-                    MudarTexto(null, 2); //altera o status
+                    //wifiAdapter.Disconnect(); //desconecta o wifi
+                    //MudarTexto(null, 2); //altera o status
+                    wiFiAPConnection.DisconnectWifi();
+                    int status = await wiFiAPConnection.WifiStatus(true, false);
+                    TextAndColor(status);
                 }
                 else
                 {
-                    MudarTexto(connectedProfile, 0); //altera o status
-                }*/
+                    //MudarTexto(connectedProfile, 0); //altera o status
+                    int status = await wiFiAPConnection.WifiStatus(false, false);
+                    TextAndColor(status);
+                }
             }
             catch
             {
@@ -177,6 +100,33 @@ namespace RobotArmAPP.Views
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
             BTN_Conectar.IsEnabled = true;
             BTN_Desconectar.IsEnabled = true;
+        } //chama MudarTexto
+
+        private void TextAndColor(int status)
+        {
+            if (status == 0)
+            {
+                TXT_Status.Text = "Disconnected";
+                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
+            }
+            else if (status == 1)
+            {
+                TXT_Status.Text = "Connected";
+                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
+            }
+            else if (status == 2)
+            {
+                TXT_Status.Text = "Connecting";
+                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.DarkOrange);
+            }
         }
+
+        private async void WifiCheckerTimer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
+        {
+            int status = await wiFiAPConnection.WifiStatus(false, false);
+            TextAndColor(status);
+        }
+
+
     }
 }

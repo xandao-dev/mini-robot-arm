@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Devices.WiFi;
-using Windows.Networking.Connectivity;
 using Windows.Security.Credentials;
 using Windows.UI.Popups;
 
@@ -14,7 +13,7 @@ namespace RobotArmAPP
         public static string SSID { get; set; } = "robotarm";
         public static string PW { get; set; } = "0xcrossbots";
 
-        public static int status = 0; //0 = notConnected, 1 = isConnected, 2 = isConnecting
+        private int status = 0; //0 = notConnected, 1 = isConnected, 2 = isConnecting
 
         WiFiAdapter wifiAdapter;
 
@@ -44,11 +43,39 @@ namespace RobotArmAPP
             return statusCode;
         } //Checks if ESP32 and computer are exchanging data
 
-        public async Task<int> WifiStatus(ConnectionProfile currentNetwork, bool isConnecting) //Checks if the computer is connected to the ESP32 WiFi and call VerificarAP
+        public async Task<bool> GetNetworkProfiles(bool verifySSID, bool needDialog)
         {
+            try
+            {
+                var currentNetwork = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
+                //await WifiStatus(false, false);
+                if (verifySSID == true)
+                {
+                    return (currentNetwork != null && currentNetwork.ProfileName == SSID);
+                }
+                else
+                {
+                    return currentNetwork != null;
+                }
+            }
+            catch
+            {
+                if (needDialog == true)
+                {
+                    var dialog = new MessageDialog("Check your WiFi network adapter!", "Error");
+                    await dialog.ShowAsync();
+                    await WifiStatus(true, false);
+                }
+                return false;
+            }
+        } //Search the networks and call the wifistatus to see if it is the right network, if yes it returns true. 
+
+        public async Task<int> WifiStatus(bool isDisconnected, bool isConnecting)
+        {
+            bool rightNetwork = await GetNetworkProfiles(true, false);
             if (isConnecting == false)
             {
-                if (currentNetwork != null && currentNetwork.ProfileName == SSID)
+                if (rightNetwork == true && isDisconnected == false)
                 {
                     try
                     {
@@ -74,27 +101,7 @@ namespace RobotArmAPP
                 status = 2;
                 return status;
             }
-        }
-
-        public async Task<bool> GetNetworkProfiles(bool needDialog)
-        {
-            try
-            {
-                var connectedProfile = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
-                await WifiStatus(connectedProfile, false);
-                return (connectedProfile != null && connectedProfile.ProfileName == SSID);
-            }
-            catch
-            {
-                if (needDialog == true)
-                {
-                    var dialog = new MessageDialog("Check your WiFi network adapter!", "Error");
-                    await dialog.ShowAsync();
-                    await WifiStatus(null, false);
-                }
-                return false;
-            }
-        } //Search the networks and call the wifistatus to see if it is the right network, if yes it returns true. 
+        } //Checks if the computer is connected to the ESP32 WiFi and call VerificarAP
 
         public async Task ConnectToWifi()
         {
@@ -122,8 +129,18 @@ namespace RobotArmAPP
             {
                 var dialog = new MessageDialog("Verifique seu adaptador de rede WiFi e o Access Point do Braço Robótico!", "Erro");
                 await dialog.ShowAsync();
-                MudarTexto(null, 2);
+                //await WifiStatus(true, false);
             }
         } //Tries to connect to the esp32 WiFi AP
+
+        public void DisconnectWifi()
+        {
+            wifiAdapter.Disconnect();
+        } //Tries to Disconnect the Wifi
     }
 }
+
+//false,false => verifica se esta conectado
+//true,false => disconectado
+//false,true => conectando
+//true,true => conectando
