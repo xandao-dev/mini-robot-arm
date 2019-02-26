@@ -85,368 +85,106 @@ namespace RobotArmAPP.Views
         #region SLIDERS & SLIDERS BOXES
         private async void Eixo1Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo1SliderBox.Text = Eixo1Slider.Value.ToString();
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    Eixo1SliderBox.Text = Eixo1Slider.Value.ToString();
-                }
-                catch { }
-            }
-
-            if (playing == true)
-            {
-                try
-                {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
-
-                }
-                catch { }
-            }
+            await SendSlidersValues(liveBoxStatus, okToSend, playing, 1);
         }
 
         private void Eixo1SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckOnlyNumber(e);
         }
 
         private void Eixo1SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            FocusOut(e);
         }
 
         private async void Eixo1SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            Eixo1SliderBox.UpdateLayout();
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo1Slider.Value = Convert.ToDouble(Eixo1SliderBox.Text);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                Eixo1Slider.Value = Convert.ToDouble(Eixo1SliderBox.Text);
-            }
-
-            try
-            {
-                if (Convert.ToDouble(Eixo1SliderBox.Text) >= 180.0)
-                    Eixo1SliderBox.Text = "180";
-                else if (Convert.ToDouble(Eixo1SliderBox.Text) <= 0.0)
-                    Eixo1SliderBox.Text = "0";
-            }
-            catch { }
+            await WhenBoxLostFocus(liveBoxStatus, okToSend, 1);
         }
 
 
         private async void Eixo2Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo2SliderBox.Text = Eixo2Slider.Value.ToString();
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    Eixo2SliderBox.Text = Eixo2Slider.Value.ToString();
-                }
-                catch { }
-            }
-
-            if (playing == true)
-            {
-                try
-                {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
-                }
-                catch { }
-            }
+            await SendSlidersValues(liveBoxStatus, okToSend, playing, 2);
         }
 
         private void Eixo2SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckOnlyNumber(e);
         }
 
-        private void Eixo2SliderBox_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+        private void Eixo2SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            FocusOut(e);
         }
 
         private async void Eixo2SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            Eixo2SliderBox.UpdateLayout();
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo2Slider.Value = Convert.ToDouble(Eixo2SliderBox.Text);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                Eixo2Slider.Value = Convert.ToDouble(Eixo2SliderBox.Text);
-            }
-
-            try
-            {
-                if (Convert.ToDouble(Eixo2SliderBox.Text) >= 180.0)
-                    Eixo2SliderBox.Text = "180";
-                else if (Convert.ToDouble(Eixo2SliderBox.Text) <= 0.0)
-                    Eixo2SliderBox.Text = "0";
-            }
-            catch { }
+            await WhenBoxLostFocus(liveBoxStatus, okToSend, 2);
         }
 
 
         private async void Eixo3Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo3SliderBox.Text = Eixo3Slider.Value.ToString();
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    Eixo3SliderBox.Text = Eixo3Slider.Value.ToString();
-                }
-                catch { }
-            }
-
-            if (playing == true)
-            {
-                try
-                {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
-                }
-                catch { }
-            }
+            await SendSlidersValues(liveBoxStatus, okToSend, playing, 3);
         }
 
         private void Eixo3SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckOnlyNumber(e);
         }
 
         private void Eixo3SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            FocusOut(e);
         }
 
         private async void Eixo3SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            Eixo3SliderBox.UpdateLayout();
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo3Slider.Value = Convert.ToDouble(Eixo3SliderBox.Text);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                Eixo3Slider.Value = Convert.ToDouble(Eixo3SliderBox.Text);
-            }
-
-            try
-            {
-                if (Convert.ToDouble(Eixo3SliderBox.Text) >= 180.0)
-                    Eixo3SliderBox.Text = "180";
-                else if (Convert.ToDouble(Eixo3SliderBox.Text) <= 0.0)
-                    Eixo3SliderBox.Text = "0";
-            }
-            catch { }
+            await WhenBoxLostFocus(liveBoxStatus, okToSend, 3);
         }
 
 
         private async void Eixo4Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo4SliderBox.Text = Eixo4Slider.Value.ToString();
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    Eixo4SliderBox.Text = Eixo4Slider.Value.ToString();
-                }
-                catch { }
-            }
-
-            if (playing == true)
-            {
-                try
-                {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
-                }
-                catch { }
-            }
+            await SendSlidersValues(liveBoxStatus, okToSend, playing, 4);
         }
 
         private void Eixo4SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckOnlyNumber(e);
         }
 
         private void Eixo4SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            FocusOut(e);
         }
 
         private async void Eixo4SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            Eixo4SliderBox.UpdateLayout();
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    Eixo4Slider.Value = Convert.ToDouble(Eixo4SliderBox.Text);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                Eixo4Slider.Value = Convert.ToDouble(Eixo4SliderBox.Text);
-            }
-
-            try
-            {
-                if (Convert.ToDouble(Eixo4SliderBox.Text) >= 180.0)
-                    Eixo4SliderBox.Text = "180";
-                else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
-                    Eixo4SliderBox.Text = "0";
-            }
-            catch { }
+            await WhenBoxLostFocus(liveBoxStatus, okToSend, 4);
         }
 
 
         private async void GarraSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    GarraSliderBox.Text = GarraSlider.Value.ToString();
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                try
-                {
-                    GarraSliderBox.Text = GarraSlider.Value.ToString();
-                }
-                catch { }
-            }
-
-            if (playing == true)
-            {
-                try
-                {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
-                }
-                catch { }
-            }
+            await SendSlidersValues(liveBoxStatus, okToSend, playing, 5);
         }
 
         private void GarraSliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckOnlyNumber(e);
         }
 
         private void GarraSliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            FocusOut(e);
         }
 
         private async void GarraSliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            GarraSliderBox.UpdateLayout();
-            if (liveBoxStatus == true && okToSend == true)
-            {
-                try
-                {
-                    GarraSlider.Value = Convert.ToDouble(GarraSliderBox.Text);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
-            }
-            else
-            {
-                GarraSlider.Value = Convert.ToDouble(GarraSliderBox.Text);
-            }
-
-            try
-            {
-                if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
-                    GarraSliderBox.Text = "180";
-                else if (Convert.ToDouble(GarraSliderBox.Text) <= 0.0)
-                    GarraSliderBox.Text = "0";
-            }
-            catch { }
+            await WhenBoxLostFocus(liveBoxStatus, okToSend, 5);
         }
         #endregion
 
@@ -1406,6 +1144,167 @@ namespace RobotArmAPP.Views
             }
             catch { }
         }
+        #endregion
+
+        #region FUNCOES
+        /**********************************SLIDERS AND SLIDERS BOX FUNCTIONS************************************/
+
+        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, int axis)
+        {
+            if (liveBoxStatus == true && okToSend == true)
+            {
+                try
+                {
+                    SwitchAxisBoxToSlider(axis);
+                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+
+                }
+                catch { }
+            }
+            else
+            {
+                try
+                {
+                    SwitchAxisBoxToSlider(axis);
+                }
+                catch { }
+            }
+
+            if (playing == true)
+            {
+                try
+                {
+                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
+                }
+                catch { }
+            }
+        }
+
+        private void SwitchAxisBoxToSlider(int axis)
+        {
+            switch (axis)
+            {
+                case 1:
+                    Eixo1SliderBox.Text = Eixo1Slider.Value.ToString();
+                    break;
+                case 2:
+                    Eixo2SliderBox.Text = Eixo2Slider.Value.ToString();
+                    break;
+                case 3:
+                    Eixo3SliderBox.Text = Eixo3Slider.Value.ToString();
+                    break;
+                case 4:
+                    Eixo4SliderBox.Text = Eixo4Slider.Value.ToString();
+                    break;
+                case 5:
+                    GarraSliderBox.Text = GarraSlider.Value.ToString();
+                    break;
+            }
+        }
+
+
+
+        public void CheckOnlyNumber(KeyRoutedEventArgs e)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
+                e.Handled = false;
+            else e.Handled = true;
+        }
+
+
+
+        public void FocusOut(KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                this.Focus(FocusState.Programmatic);
+            }
+        }
+
+
+
+        private async Task WhenBoxLostFocus(bool liveBoxStatus, bool okToSend, int axis)
+        {
+            if (liveBoxStatus == true && okToSend == true)
+            {
+                try
+                {
+                    SwitchAxisSliderToBox(axis);
+                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+                }
+                catch { }
+            }
+            else
+            {
+                SwitchAxisSliderToBox(axis);
+            }
+
+            try
+            {
+                VerifySliderBoxValue(axis);
+            }
+            catch { }
+        }
+
+        private void SwitchAxisSliderToBox(int axis)
+        {
+            switch (axis)
+            {
+                case 1:
+                    Eixo1Slider.Value = Convert.ToDouble(Eixo1SliderBox.Text);
+                    break;
+                case 2:
+                    Eixo2Slider.Value = Convert.ToDouble(Eixo2SliderBox.Text);
+                    break;
+                case 3:
+                    Eixo3Slider.Value = Convert.ToDouble(Eixo3SliderBox.Text);
+                    break;
+                case 4:
+                    Eixo4Slider.Value = Convert.ToDouble(Eixo4SliderBox.Text);
+                    break;
+                case 5:
+                    GarraSlider.Value = Convert.ToDouble(GarraSliderBox.Text);
+                    break;
+            }
+        }
+
+        private void VerifySliderBoxValue(int axis)
+        {
+            switch (axis)
+            {
+                case 1:
+                    if (Convert.ToDouble(Eixo1SliderBox.Text) >= 180.0)
+                        Eixo1SliderBox.Text = "180";
+                    else if (Convert.ToDouble(Eixo1SliderBox.Text) <= 0.0)
+                        Eixo1SliderBox.Text = "0";
+                    break;
+                case 2:
+                    if (Convert.ToDouble(Eixo2SliderBox.Text) >= 180.0)
+                        Eixo2SliderBox.Text = "180";
+                    else if (Convert.ToDouble(Eixo2SliderBox.Text) <= 0.0)
+                        Eixo2SliderBox.Text = "0";
+                    break;
+                case 3:
+                    if (Convert.ToDouble(Eixo3SliderBox.Text) >= 180.0)
+                        Eixo3SliderBox.Text = "180";
+                    else if (Convert.ToDouble(Eixo3SliderBox.Text) <= 0.0)
+                        Eixo3SliderBox.Text = "0";
+                    break;
+                case 4:
+                    if (Convert.ToDouble(Eixo4SliderBox.Text) >= 180.0)
+                        Eixo4SliderBox.Text = "180";
+                    else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
+                        Eixo4SliderBox.Text = "0";
+                    break;
+                case 5:
+                    if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
+                        GarraSliderBox.Text = "180";
+                    else if (Convert.ToDouble(GarraSliderBox.Text) <= 0.0)
+                        GarraSliderBox.Text = "0";
+                    break;
+            }
+        }
+        /********************************************************************************************************/
         #endregion
     }
 }
