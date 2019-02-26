@@ -16,8 +16,6 @@ namespace RobotArmAPP.Views
         public Conexao()
         {
             this.InitializeComponent();
-
-            WifiCheckerTimer = new DispatcherTimer();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -27,6 +25,7 @@ namespace RobotArmAPP.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            WifiCheckerTimer = new DispatcherTimer();
             WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
             WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(250);
             WifiCheckerTimer.Start();

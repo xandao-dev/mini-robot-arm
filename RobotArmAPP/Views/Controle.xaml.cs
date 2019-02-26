@@ -49,16 +49,6 @@ namespace RobotArmAPP.Views
         public Controle()
         {
             this.InitializeComponent();
-
-            WifiCheckerTimer = new DispatcherTimer();
-
-            playbackTimer = new DispatcherTimer();
-            playbackTimer.Tick += PlaybackTimer_Tick;
-
-            loadJsonTimer = new DispatcherTimer();
-            loadJsonTimer.Tick += LoadJsonTimer_Tick;
-            loadJsonTimer.Interval = TimeSpan.FromMilliseconds(800.0);
-            loadJsonTimer.Start();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -76,6 +66,10 @@ namespace RobotArmAPP.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            playbackTimer = new DispatcherTimer();
+            playbackTimer.Tick += PlaybackTimer_Tick;
+
+            WifiCheckerTimer = new DispatcherTimer();
             WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
             WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(250.0);
             WifiCheckerTimer.Start();
@@ -90,17 +84,17 @@ namespace RobotArmAPP.Views
 
         private void Eixo1SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            CheckOnlyNumber(e);
+            CheckBoxOnlyNumber(e);
         }
 
         private void Eixo1SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            FocusOut(e);
+            BoxFocusOut(e);
         }
 
         private async void Eixo1SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await WhenBoxLostFocus(liveBoxStatus, okToSend, 1);
+            await WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 1);
         }
 
 
@@ -111,17 +105,17 @@ namespace RobotArmAPP.Views
 
         private void Eixo2SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            CheckOnlyNumber(e);
+            CheckBoxOnlyNumber(e);
         }
 
         private void Eixo2SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            FocusOut(e);
+            BoxFocusOut(e);
         }
 
         private async void Eixo2SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await WhenBoxLostFocus(liveBoxStatus, okToSend, 2);
+            await WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 2);
         }
 
 
@@ -132,17 +126,17 @@ namespace RobotArmAPP.Views
 
         private void Eixo3SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            CheckOnlyNumber(e);
+            CheckBoxOnlyNumber(e);
         }
 
         private void Eixo3SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            FocusOut(e);
+            BoxFocusOut(e);
         }
 
         private async void Eixo3SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await WhenBoxLostFocus(liveBoxStatus, okToSend, 3);
+            await WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 3);
         }
 
 
@@ -153,17 +147,17 @@ namespace RobotArmAPP.Views
 
         private void Eixo4SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            CheckOnlyNumber(e);
+            CheckBoxOnlyNumber(e);
         }
 
         private void Eixo4SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            FocusOut(e);
+            BoxFocusOut(e);
         }
 
         private async void Eixo4SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await WhenBoxLostFocus(liveBoxStatus, okToSend, 4);
+            await WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 4);
         }
 
 
@@ -174,441 +168,115 @@ namespace RobotArmAPP.Views
 
         private void GarraSliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            CheckOnlyNumber(e);
+            CheckBoxOnlyNumber(e);
         }
 
         private void GarraSliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            FocusOut(e);
+            BoxFocusOut(e);
         }
 
         private async void GarraSliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await WhenBoxLostFocus(liveBoxStatus, okToSend, 5);
+            await WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 5);
         }
         #endregion
 
         #region SPEED/REPETITIONS/DELAY
         private void FrameSpeedBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckBoxOnlyNumber(e);
         }
 
         private void FrameSpeedBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            BoxFocusOut(e);
         }
 
-        private void FrameSpeedBox_LostFocus(object sender, RoutedEventArgs e)
+        private async void FrameSpeedBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            FrameSpeedBox.UpdateLayout();
-            try
-            {
-                double dSpeed = Convert.ToDouble(FrameSpeedBox.Text);
-                double dDelay = Convert.ToDouble(DelayBox.Text);
-                int speed = Convert.ToInt16(FrameSpeedBox.Text);
-                int minimum = 900 * 100 / speed;
-
-                try
-                {
-                    if (dSpeed > 100.0)
-                        FrameSpeedBox.Text = "100";
-                    else if (dSpeed < 0.0)
-                        FrameSpeedBox.Text = "0";
-                }
-                catch { }
-
-                try
-                {
-                    if (dDelay < minimum)
-                        DelayBox.Text = Convert.ToString(minimum);
-                }
-                catch { }
-
-                AutoSaveJson();
-            }
-            catch { }
+            await BoxesMaxNumberLimiter(1);
+            AutoSaveJson();
         }
 
 
         private void DelayBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else
-                e.Handled = true;
+            CheckBoxOnlyNumber(e);
         }
 
         private void DelayBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            BoxFocusOut(e);
         }
 
         private async void DelayBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            DelayBox.UpdateLayout();
-            try
-            {
-                double dDelay = Convert.ToDouble(DelayBox.Text);
-                int speed = Convert.ToInt16(FrameSpeedBox.Text);
-                int minimum = 900 * 100 / speed;
-                int minimum1degree = 5 * 100 / speed;
-
-                if (Convert.ToInt64(DelayBox.Text) < minimum)
-                {
-                    var dialog = new MessageDialog("Minimum Recommended at " + speed + "% speed for MG995: " + minimum + "ms\nTimes greater than " + minimum + "ms can make movement incomplete.\n" + minimum + "ms is the minimum required for the MG995 to rotate 180º at " + speed + "% speed.\nBut if you want to continue, use at least " + minimum1degree + "ms per degree changed.\n\nFor automatic minimum delay, choose the frame item and click at \"Min Delay\"", "Alert!");
-                    await dialog.ShowAsync();
-                }
-
-                try
-                {
-                    if (dDelay > 300000.0)
-                        DelayBox.Text = "300000";
-                    else if (dDelay < 0.0)
-                        DelayBox.Text = "0";
-                }
-                catch { }
-                AutoSaveJson();
-            }
-            catch { }
-
+            await BoxesMaxNumberLimiter(2);
+            AutoSaveJson();
         }
 
         private void MinDelay_Click(object sender, RoutedEventArgs e)//CALCULADO APENAS PARA O MG995
         {
-            try
-            {
-                int selected = FramesListView.SelectedIndex;
-                if (selected == 0)
-                {
-                    int[] selectedArray = framesList[selected];
-                    int[] lastArray = framesList[FramesListView.Items.Count - 1];
-                    int speed = selectedArray[5];
-
-                    if (selectedArray == lastArray)
-                    {
-                        int minimum = 900 * 100 / speed;
-
-                        framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], minimum };
-                        FramesListView.Items.Insert(selected, SelectedListToString(minimum));
-                        FramesListView.Items.RemoveAt(selected + 1);
-                        FramesListView.SelectedIndex = selected;
-
-                        AutoSaveJson();
-                    }
-                    else
-                    {
-                        int eixo1difference = Math.Abs(selectedArray[0] - lastArray[0]);
-                        int eixo2difference = Math.Abs(selectedArray[1] - lastArray[1]);
-                        int eixo3difference = Math.Abs(selectedArray[2] - lastArray[2]);
-                        int eixo4difference = Math.Abs(selectedArray[3] - lastArray[3]);
-                        int garradifference = Math.Abs(selectedArray[4] - lastArray[4]);
-
-                        int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                        int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
-
-                        framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                        FramesListView.Items.Insert(selected, SelectedListToString(delayMin));
-                        FramesListView.Items.RemoveAt(selected + 1);
-                        FramesListView.SelectedIndex = selected;
-
-                        AutoSaveJson();
-                    }
-                }
-                else
-                {
-                    int[] selectedArray = framesList[selected];
-                    int[] previousArray = framesList[selected - 1];
-
-                    int eixo1difference = Math.Abs(selectedArray[0] - previousArray[0]);
-                    int eixo2difference = Math.Abs(selectedArray[1] - previousArray[1]);
-                    int eixo3difference = Math.Abs(selectedArray[2] - previousArray[2]);
-                    int eixo4difference = Math.Abs(selectedArray[3] - previousArray[3]);
-                    int garradifference = Math.Abs(selectedArray[4] - previousArray[4]);
-
-                    int speed = Convert.ToInt16(FrameSpeedBox.Text);
-
-                    int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                    int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
-
-                    framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                    FramesListView.Items.Insert(selected, SelectedListToString(delayMin));
-                    FramesListView.Items.RemoveAt(selected + 1);
-                    FramesListView.SelectedIndex = selected;
-
-                    AutoSaveJson();
-                }
-            }
-            catch { }
+            SwitchMinimizeDelay(1);
+            AutoSaveJson();
         }
 
         private void MinDelayAll_Click(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
             changingControls = true;
-            Blocker1.Visibility = Visibility.Visible;
-            Blocker2.Visibility = Visibility.Visible;
-            Blocker3.Visibility = Visibility.Visible;
+            LockControls(true, true);
             Canvas.SetZIndex(StopPlayback, 1);
             Canvas.SetZIndex(Blocker2, 2);
-            try
-            {
-                for (int selected = 0; selected < FramesListView.Items.Count; selected++)
-                {
-                    FramesListView.SelectedIndex = selected;
-                    if (selected == 0)
-                    {
-                        int[] selectedArray = framesList[selected];
-                        int[] lastArray = framesList[FramesListView.Items.Count - 1];
-                        int speed = selectedArray[5];
 
-                        if (selectedArray == lastArray)
-                        {
-                            int minimum = 900 * 100 / speed;
+            SwitchMinimizeDelay(0);
 
-                            framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], minimum };
-                            FramesListView.Items.Insert(selected, SelectedListToString(minimum));
-                            FramesListView.Items.RemoveAt(selected + 1);
+            changingControls = false;
+            LockControls(false, false);
 
-                            AutoSaveJson();
-                        }
-                        else
-                        {
-                            int eixo1difference = Math.Abs(selectedArray[0] - lastArray[0]);
-                            int eixo2difference = Math.Abs(selectedArray[1] - lastArray[1]);
-                            int eixo3difference = Math.Abs(selectedArray[2] - lastArray[2]);
-                            int eixo4difference = Math.Abs(selectedArray[3] - lastArray[3]);
-                            int garradifference = Math.Abs(selectedArray[4] - lastArray[4]);
-
-                            int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                            int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
-
-                            framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                            FramesListView.Items.Insert(selected, SelectedListToString(delayMin));
-                            FramesListView.Items.RemoveAt(selected + 1);
-
-                            AutoSaveJson();
-                        }
-                    }
-                    else
-                    {
-                        int[] selectedArray = framesList[selected];
-                        int[] previousArray = framesList[selected - 1];
-
-                        int eixo1difference = Math.Abs(selectedArray[0] - previousArray[0]);
-                        int eixo2difference = Math.Abs(selectedArray[1] - previousArray[1]);
-                        int eixo3difference = Math.Abs(selectedArray[2] - previousArray[2]);
-                        int eixo4difference = Math.Abs(selectedArray[3] - previousArray[3]);
-                        int garradifference = Math.Abs(selectedArray[4] - previousArray[4]);
-
-                        int speed = Convert.ToInt16(FrameSpeedBox.Text);
-
-                        int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                        int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
-
-                        framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                        FramesListView.Items.Insert(selected, SelectedListToString(delayMin));
-                        FramesListView.Items.RemoveAt(selected + 1);
-
-                        AutoSaveJson();
-                    }
-                }
-                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
-            }
-            catch { }
-            Blocker1.Visibility = Visibility.Collapsed;
-            Blocker2.Visibility = Visibility.Collapsed;
-            Blocker3.Visibility = Visibility.Collapsed;
-            changingControls = true;
-            Thread.Sleep(200);
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-        }
-
-        private string SelectedListToString(int delay)
-        {
-            int selected = FramesListView.SelectedIndex;
-            int[] selectedArray = framesList[selected];
-            try
-            {
-                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                int frameDelay = Convert.ToInt32(DelayBox.Text);
-                string add = "[";
-                add += selectedArray[0].ToString("000");
-                add += ",";
-                add += selectedArray[1].ToString("000");
-                add += ",";
-                add += selectedArray[2].ToString("000");
-                add += ",";
-                add += selectedArray[3].ToString("000");
-                add += ",";
-                add += selectedArray[4].ToString("000");
-                add += "]";
-                add += " Speed: ";
-                add += selectedArray[5].ToString("000");
-                add += ", Delay: ";
-                add += delay.ToString("000000");
-                add += "ms";
-                return add;
-            }
-            catch
-            {
-                return null;
-            }
+            AutoSaveJson();
         }
 
 
         private void RepeatTimesBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
-                e.Handled = false;
-            else e.Handled = true;
+            CheckBoxOnlyNumber(e);
         }
 
         private void RepeatTimesBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
-            {
-                this.Focus(FocusState.Programmatic);
-            }
+            BoxFocusOut(e);
         }
 
-        private void RepeatTimesBox_LostFocus(object sender, RoutedEventArgs e)
+        private async void RepeatTimesBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            RepeatTimesBox.UpdateLayout();
-            try
-            {
-                double dRepeats = Convert.ToDouble(RepeatTimesBox.Text);
-
-                if (dRepeats > 10000.0)
-                    RepeatTimesBox.Text = "10000";
-                else if (dRepeats < 0.0)
-                    RepeatTimesBox.Text = "0";
-            }
-            catch { }
-
+            await BoxesMaxNumberLimiter(3);
             AutoSaveJson();
         }
         #endregion
 
-        #region HTTP REQUESTS 
-        private async Task<string> GetRequest(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor)
-        {
-            HttpClient cliente = new HttpClient();
-            string resultado = await cliente.GetStringAsync("http://10.10.10.10:18/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor);
-            return resultado;
-        }
-
-        private async Task<string> GetRequestPlayer(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor, string speed)
-        {
-            HttpClient cliente = new HttpClient();
-            string resultado = await cliente.GetStringAsync("http://10.10.10.10:18/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor + "&param6=" + speed);
-            return resultado;
-        }
-
-        private async Task<string> ReadyToSend(int readyToSend)
-        {
-            HttpClient cliente = new HttpClient();
-            HttpResponseMessage response = new HttpResponseMessage();
-            string resultado = await cliente.GetStringAsync("http://10.10.10.10/readytosend/?param=" + readyToSend);
-            return resultado;
-        }
-        #endregion 
-
         #region CONTROLS
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-            }
-            catch { }
+            await SendAxisValuesToEsp();
             AutoSaveJson();
         }
 
         private void ResetControlsButton_Click(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
-            Eixo1Slider.Value = 90;
-            Eixo2Slider.Value = 90;
-            Eixo3Slider.Value = 90;
-            Eixo4Slider.Value = 90;
-            GarraSlider.Value = 90;
-            FrameSpeedBox.Text = "100";
-            DelayBox.Text = "1000";
-            RepeatTimesBox.Text = "0";
-            FramesListView.Items.Clear();
-            framesList.Clear();
+            ResetControls();
             DeleteJsonSaved();
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
         }
 
         private void InsertFrame_Click(object sender, RoutedEventArgs e)
         {
-            if (FramesListView.SelectedItems.Count > 0)
-            {
-                try
-                {
-                    int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                    int frameDelay = Convert.ToInt32(DelayBox.Text);
-                    framesList.Insert(FramesListView.SelectedIndex + 1, new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                }
-                catch
-                {
-                    int frameSpeed = 100;
-                    int frameDelay = 1000;
-                    framesList.Insert(FramesListView.SelectedIndex + 1, new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                }
-                string add = ListToString();
-                FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, add);
-                FramesListView.SelectedIndex = FramesListView.SelectedIndex + 1;
-            }
-            else
-            {
-                try
-                {
-                    int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                    int frameDelay = Convert.ToInt32(DelayBox.Text);
-                    framesList.Add(new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                }
-                catch
-                {
-                    int frameSpeed = 100;
-                    int frameDelay = 1000;
-                    framesList.Add(new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                }
-                string add = ListToString();
-                FramesListView.Items.Add(add);
-                FramesListView.SelectedIndex = framesList.Count() - 1;
-            }
-            FramesListView.UpdateLayout();
-            //FramesListView.ScrollIntoView(FramesListView.Items[framesList.Count() - 1]);
-            //FramesListView.ScrollIntoView(framesList.Count() - 1);
-            //FramesListView.MakeVisible();
-            //var scrollViewer = GetScrollViewer(FramesListView);
-            //scrollViewer.ScrollToVerticalOffset(10000);
+            InsertFrameFunction();
             AutoSaveJson();
         }
 
         private void OverwriteFrame_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                int selectedIndex = FramesListView.SelectedIndex;
-                framesList[selectedIndex] = new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text) };
-                FramesListView.Items.Insert(selectedIndex, ListToString());
-                FramesListView.Items.RemoveAt(selectedIndex + 1);
-                FramesListView.SelectedIndex = selectedIndex;
-            }
-            catch { }
-
+            OverwriteFrameFunction();
             AutoSaveJson();
         }
 
@@ -619,41 +287,13 @@ namespace RobotArmAPP.Views
                 return;
             }
 
-            int selected = FramesListView.SelectedIndex;
-            framesList.RemoveAt(selected);
-            FramesListView.Items.RemoveAt(selected);
-
-            try
-            {
-                FramesListView.SelectedIndex = selected;
-            }
-            catch
-            {
-                try
-                {
-                    FramesListView.SelectedIndex = selected - 1;
-                }
-                catch { }
-            }
-
+            DeleteFrameFunction();
             AutoSaveJson();
         }
 
         private void FramesListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            try
-            {
-                int selected = FramesListView.SelectedIndex;
-                int[] selectedArray = framesList[selected];
-                GarraSlider.Value = selectedArray[0];
-                Eixo4Slider.Value = selectedArray[1];
-                Eixo3Slider.Value = selectedArray[2];
-                Eixo2Slider.Value = selectedArray[3];
-                Eixo1Slider.Value = selectedArray[4];
-                FrameSpeedBox.Text = Convert.ToString(selectedArray[5]);
-                DelayBox.Text = Convert.ToString(selectedArray[6]);
-            }
-            catch { }
+            SendItemsToSlidersWhenDoubleTapped();
         }
 
         private void FramesListView_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -665,72 +305,9 @@ namespace RobotArmAPP.Views
                     return;
                 }
 
-                int selected = FramesListView.SelectedIndex;
-                framesList.RemoveAt(selected);
-                FramesListView.Items.RemoveAt(selected);
-
-                try
-                {
-                    FramesListView.SelectedIndex = selected;
-                }
-                catch
-                {
-                    try
-                    {
-                        FramesListView.SelectedIndex = selected - 1;
-                    }
-                    catch { }
-                }
+                DeleteFrameFunction();
 
                 AutoSaveJson();
-            }
-        }
-
-        private string ListToString()
-        {
-            try
-            {
-                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                int frameDelay = Convert.ToInt32(DelayBox.Text);
-                string add = "[";
-                add += GarraSlider.Value.ToString("000");
-                add += ",";
-                add += Eixo4Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo3Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo2Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo1Slider.Value.ToString("000");
-                add += "]";
-                add += " Speed: ";
-                add += frameSpeed.ToString("000");
-                add += ", Delay: ";
-                add += frameDelay.ToString("000000");
-                add += "ms";
-                return add;
-            }
-            catch
-            {
-                int frameSpeed = 100;
-                int frameDelay = 0;
-                string add = "[";
-                add += Eixo1Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo2Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo3Slider.Value.ToString("000");
-                add += ",";
-                add += Eixo4Slider.Value.ToString("000");
-                add += ",";
-                add += GarraSlider.Value.ToString("000");
-                add += "]";
-                add += " Speed: ";
-                add += frameSpeed.ToString("000");
-                add += ", Delay: ";
-                add += frameDelay.ToString("000000");
-                add += "ms";
-                return add;
             }
         }
         #endregion
@@ -866,15 +443,6 @@ namespace RobotArmAPP.Views
             }
 
         } // Timer que envia as sequencias no Play
-
-        private async void LoadJsonTimer_Tick(object sender, object e)
-        {
-            //Thread.Sleep(700);
-            //await LoadJsonSaved();
-
-            //Thread.Sleep(1000);
-            loadJsonTimer.Stop();
-        }
         #endregion
 
         #region JSON - SAVE/LOAD/DELETE
@@ -915,9 +483,6 @@ namespace RobotArmAPP.Views
                         {
                             await FileIO.AppendTextAsync(file, ",");
                         }
-
-                        //await FileIO.AppendTextAsync(file, s1 + s2 + s3 + s4 + s5 + d + Environment.NewLine);
-                        //await FileIO.AppendLinesAsync(file, new List<string>() {s1+s2+s3+s4+s5+d});
                     }
 
                     await FileIO.AppendTextAsync(file, "]}");
@@ -1147,37 +712,35 @@ namespace RobotArmAPP.Views
         #endregion
 
         #region FUNCOES
-        /**********************************SLIDERS AND SLIDERS BOX FUNCTIONS************************************/
-
         public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, int axis)
         {
-            if (liveBoxStatus == true && okToSend == true)
+            try
             {
-                try
+                if (liveBoxStatus == true && okToSend == true)
                 {
                     SwitchAxisBoxToSlider(axis);
-                    await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-
+                    await SendAxisValuesToEsp();
                 }
-                catch { }
-            }
-            else
-            {
-                try
+                else
                 {
                     SwitchAxisBoxToSlider(axis);
                 }
-                catch { }
-            }
 
-            if (playing == true)
-            {
-                try
+                if (playing == true)
                 {
-                    await GetRequestPlayer(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value), FrameSpeedBox.Text);
+                    await SendAxisValuesToEsp();
                 }
-                catch { }
             }
+            catch { }
+        }
+
+        public async Task SendAxisValuesToEsp()
+        {
+            try
+            {
+                await GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+            }
+            catch { }
         }
 
         private void SwitchAxisBoxToSlider(int axis)
@@ -1204,16 +767,14 @@ namespace RobotArmAPP.Views
 
 
 
-        public void CheckOnlyNumber(KeyRoutedEventArgs e)
+        public void CheckBoxOnlyNumber(KeyRoutedEventArgs e)
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(e.Key.ToString(), "[0-9]"))
                 e.Handled = false;
             else e.Handled = true;
         }
 
-
-
-        public void FocusOut(KeyRoutedEventArgs e)
+        public void BoxFocusOut(KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
             {
@@ -1221,9 +782,51 @@ namespace RobotArmAPP.Views
             }
         }
 
+        public void LockControls(bool? waitArrow, bool locked)
+        {
+            switch (waitArrow)
+            {
+                case true:
+                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
+                    break;
+                case false:
+                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+                    break;
+            }
+
+            switch (locked)
+            {
+                case true:
+                    Blocker1.Visibility = Visibility.Visible;
+                    Blocker2.Visibility = Visibility.Visible;
+                    Blocker3.Visibility = Visibility.Visible;
+                    break;
+                case false:
+                    Blocker1.Visibility = Visibility.Collapsed;
+                    Blocker2.Visibility = Visibility.Collapsed;
+                    Blocker3.Visibility = Visibility.Collapsed;
+                    break;
+            }
+
+        }
+
+        public void ResetControls()
+        {
+            Eixo1Slider.Value = 90;
+            Eixo2Slider.Value = 90;
+            Eixo3Slider.Value = 90;
+            Eixo4Slider.Value = 90;
+            GarraSlider.Value = 90;
+            FrameSpeedBox.Text = "100";
+            DelayBox.Text = "1000";
+            RepeatTimesBox.Text = "0";
+            FramesListView.Items.Clear();
+            framesList.Clear();
+        }
 
 
-        private async Task WhenBoxLostFocus(bool liveBoxStatus, bool okToSend, int axis)
+
+        private async Task WhenSliderBoxLostFocus(bool liveBoxStatus, bool okToSend, int axis)
         {
             if (liveBoxStatus == true && okToSend == true)
             {
@@ -1273,30 +876,35 @@ namespace RobotArmAPP.Views
             switch (axis)
             {
                 case 1:
+                    Eixo1SliderBox.UpdateLayout();
                     if (Convert.ToDouble(Eixo1SliderBox.Text) >= 180.0)
                         Eixo1SliderBox.Text = "180";
                     else if (Convert.ToDouble(Eixo1SliderBox.Text) <= 0.0)
                         Eixo1SliderBox.Text = "0";
                     break;
                 case 2:
+                    Eixo2SliderBox.UpdateLayout();
                     if (Convert.ToDouble(Eixo2SliderBox.Text) >= 180.0)
                         Eixo2SliderBox.Text = "180";
                     else if (Convert.ToDouble(Eixo2SliderBox.Text) <= 0.0)
                         Eixo2SliderBox.Text = "0";
                     break;
                 case 3:
+                    Eixo3SliderBox.UpdateLayout();
                     if (Convert.ToDouble(Eixo3SliderBox.Text) >= 180.0)
                         Eixo3SliderBox.Text = "180";
                     else if (Convert.ToDouble(Eixo3SliderBox.Text) <= 0.0)
                         Eixo3SliderBox.Text = "0";
                     break;
                 case 4:
+                    Eixo4SliderBox.UpdateLayout();
                     if (Convert.ToDouble(Eixo4SliderBox.Text) >= 180.0)
                         Eixo4SliderBox.Text = "180";
                     else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
                         Eixo4SliderBox.Text = "0";
                     break;
                 case 5:
+                    GarraSliderBox.UpdateLayout();
                     if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
                         GarraSliderBox.Text = "180";
                     else if (Convert.ToDouble(GarraSliderBox.Text) <= 0.0)
@@ -1304,10 +912,320 @@ namespace RobotArmAPP.Views
                     break;
             }
         }
-        /********************************************************************************************************/
-        #endregion
+
+
+
+        private async Task BoxesMaxNumberLimiter(int control)
+        {
+            /*
+             *   1:FrameSpeedBox
+             *   2:DelayBox
+             *   3:RepeatTimesBox
+             */
+            try
+            {
+                double dRepeats = Convert.ToDouble(RepeatTimesBox.Text);
+                double dSpeed = Convert.ToDouble(FrameSpeedBox.Text);
+                double dDelay = Convert.ToDouble(DelayBox.Text);
+                int speed = Convert.ToInt16(FrameSpeedBox.Text);
+                int minimum = 900 * 100 / speed;
+                int minimum1degree = 5 * 100 / speed;
+
+                switch (control)
+                {
+                    case 1:
+                        /*Speed Box*/
+                        FrameSpeedBox.UpdateLayout();
+                        if (dSpeed > 100.0)
+                            FrameSpeedBox.Text = "100";
+                        else if (dSpeed < 0.0)
+                            FrameSpeedBox.Text = "0";
+
+                        if (dDelay < minimum)
+                            DelayBox.Text = Convert.ToString(minimum);
+                        break;
+                    case 2:
+                        /*Delay Box*/
+                        DelayBox.UpdateLayout();
+                        if (dDelay > 300000.0)
+                            DelayBox.Text = "300000";
+                        else if (dDelay < 0.0)
+                            DelayBox.Text = "0";
+
+                        if (Convert.ToInt64(DelayBox.Text) < minimum)
+                        {
+                            var dialog = new MessageDialog("Minimum Recommended at " + speed + "% speed for MG995: " + minimum + "ms\nTimes greater than " + minimum + "ms can make movement incomplete.\n" + minimum + "ms is the minimum required for the MG995 to rotate 180º at " + speed + "% speed.\nBut if you want to continue, use at least " + minimum1degree + "ms per degree changed.\n\nFor automatic minimum delay, choose the frame item and click at \"Min Delay\"", "Alert!");
+                            await dialog.ShowAsync();
+                        }
+                        break;
+                    case 3:
+                        /*Repeat Times Box*/
+                        RepeatTimesBox.UpdateLayout();
+                        if (dRepeats > 10000.0)
+                            RepeatTimesBox.Text = "10000";
+                        else if (dRepeats < 0.0)
+                            RepeatTimesBox.Text = "0";
+                        break;
+                }
+            }
+            catch { }
+        }
+
+        private void SwitchMinimizeDelay(byte type)
+        {
+            /*
+             * 0: Min Delay All Items
+             * 1: Min Delay One Item
+             */
+            switch (type)
+            {
+                case 0:
+                    try
+                    {
+                        for (int selected = 0; selected < FramesListView.Items.Count; selected++)
+                        {
+                            MinimizeDelayCalculus(selected);
+                        }
+                        FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+                    }
+                    catch { }
+                    break;
+                case 1:
+                    try
+                    {
+                        int selected = FramesListView.SelectedIndex;
+                        MinimizeDelayCalculus(selected);
+                        FramesListView.SelectedIndex = selected;
+                    }
+                    catch { }
+                    break;
+            }
+        }
+
+        public void MinimizeDelayCalculus(int selected)
+        {
+            FramesListView.SelectedIndex = selected;
+            if (selected == 0)
+            {
+                int[] selectedArray = framesList[selected];
+                int[] lastArray = framesList[FramesListView.Items.Count - 1];
+                int speed = selectedArray[5];
+
+                if (selectedArray == lastArray)
+                {
+                    int minimum = 900 * 100 / speed;
+
+                    framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], minimum };
+                    FramesListView.Items.Insert(selected, SelectedItemListToString(minimum));
+                    FramesListView.Items.RemoveAt(selected + 1);
+                    FramesListView.SelectedIndex = selected;
+                }
+                else
+                {
+                    int eixo1difference = Math.Abs(selectedArray[0] - lastArray[0]);
+                    int eixo2difference = Math.Abs(selectedArray[1] - lastArray[1]);
+                    int eixo3difference = Math.Abs(selectedArray[2] - lastArray[2]);
+                    int eixo4difference = Math.Abs(selectedArray[3] - lastArray[3]);
+                    int garradifference = Math.Abs(selectedArray[4] - lastArray[4]);
+
+                    int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
+                    int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
+
+                    framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
+                    FramesListView.Items.Insert(selected, SelectedItemListToString(delayMin));
+                    FramesListView.Items.RemoveAt(selected + 1);
+                    FramesListView.SelectedIndex = selected;
+                }
+            }
+            else
+            {
+                int[] selectedArray = framesList[selected];
+                int[] previousArray = framesList[selected - 1];
+
+                int eixo1difference = Math.Abs(selectedArray[0] - previousArray[0]);
+                int eixo2difference = Math.Abs(selectedArray[1] - previousArray[1]);
+                int eixo3difference = Math.Abs(selectedArray[2] - previousArray[2]);
+                int eixo4difference = Math.Abs(selectedArray[3] - previousArray[3]);
+                int garradifference = Math.Abs(selectedArray[4] - previousArray[4]);
+
+                int speed = Convert.ToInt16(FrameSpeedBox.Text);
+
+                int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
+                int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
+
+                framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
+                FramesListView.Items.Insert(selected, SelectedItemListToString(delayMin));
+                FramesListView.Items.RemoveAt(selected + 1);
+                FramesListView.SelectedIndex = selected;
+            }
+        }
+
+        private string SelectedItemListToString(int delay)
+        {
+            int selected = FramesListView.SelectedIndex;
+            int[] selectedArray = framesList[selected];
+            try
+            {
+                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
+                int frameDelay = Convert.ToInt32(DelayBox.Text);
+                string add = "[";
+                add += selectedArray[0].ToString("000");
+                add += ",";
+                add += selectedArray[1].ToString("000");
+                add += ",";
+                add += selectedArray[2].ToString("000");
+                add += ",";
+                add += selectedArray[3].ToString("000");
+                add += ",";
+                add += selectedArray[4].ToString("000");
+                add += "]";
+                add += " Speed: ";
+                add += selectedArray[5].ToString("000");
+                add += ", Delay: ";
+                add += delay.ToString("000000");
+                add += "ms";
+                return add;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+
+        public void InsertFrameFunction()
+        {
+            try
+            {
+                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
+                int frameDelay = Convert.ToInt32(DelayBox.Text);
+
+                if (FramesListView.SelectedItems.Count > 0)
+                {
+                    framesList.Insert(FramesListView.SelectedIndex + 1, new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
+                    string add = ListToString();
+                    FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, add);
+                    FramesListView.SelectedIndex = FramesListView.SelectedIndex + 1;
+                }
+                else
+                {
+                    framesList.Add(new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
+                    string add = ListToString();
+                    FramesListView.Items.Add(add);
+                    FramesListView.SelectedIndex = framesList.Count() - 1;
+                }
+            }
+            catch { }
+        }
+
+        public void OverwriteFrameFunction()
+        {
+            try
+            {
+                int selectedIndex = FramesListView.SelectedIndex;
+                framesList[selectedIndex] = new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text) };
+                FramesListView.Items.Insert(selectedIndex, ListToString());
+                FramesListView.Items.RemoveAt(selectedIndex + 1);
+                FramesListView.SelectedIndex = selectedIndex;
+            }
+            catch { }
+        }
+
+        public void DeleteFrameFunction()
+        {
+            int selected = FramesListView.SelectedIndex;
+            framesList.RemoveAt(selected);
+            FramesListView.Items.RemoveAt(selected);
+
+            try
+            {
+                FramesListView.SelectedIndex = selected;
+            }
+            catch
+            {
+                try
+                {
+                    FramesListView.SelectedIndex = selected - 1;
+                }
+                catch { }
+            }
+        }
+
+        public void SendItemsToSlidersWhenDoubleTapped()
+        {
+            try
+            {
+                int selected = FramesListView.SelectedIndex;
+                int[] selectedArray = framesList[selected];
+                GarraSlider.Value = selectedArray[0];
+                Eixo4Slider.Value = selectedArray[1];
+                Eixo3Slider.Value = selectedArray[2];
+                Eixo2Slider.Value = selectedArray[3];
+                Eixo1Slider.Value = selectedArray[4];
+                FrameSpeedBox.Text = Convert.ToString(selectedArray[5]);
+                DelayBox.Text = Convert.ToString(selectedArray[6]);
+            }
+            catch { }
+        }
+
+        private string ListToString()
+        {
+            try
+            {
+                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
+                int frameDelay = Convert.ToInt32(DelayBox.Text);
+                string add = "[";
+                add += GarraSlider.Value.ToString("000");
+                add += ",";
+                add += Eixo4Slider.Value.ToString("000");
+                add += ",";
+                add += Eixo3Slider.Value.ToString("000");
+                add += ",";
+                add += Eixo2Slider.Value.ToString("000");
+                add += ",";
+                add += Eixo1Slider.Value.ToString("000");
+                add += "]";
+                add += " Speed: ";
+                add += frameSpeed.ToString("000");
+                add += ", Delay: ";
+                add += frameDelay.ToString("000000");
+                add += "ms";
+                return add;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        #region HTTP REQUESTS 
+        private async Task<string> GetRequest(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor)
+        {
+            HttpClient cliente = new HttpClient();
+            string resultado = await cliente.GetStringAsync("http://10.10.10.10:18/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor);
+            return resultado;
+        }
+
+        private async Task<string> GetRequestPlayer(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor, string speed)
+        {
+            HttpClient cliente = new HttpClient();
+            string resultado = await cliente.GetStringAsync("http://10.10.10.10:18/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor + "&param6=" + speed);
+            return resultado;
+        }
+
+        private async Task<string> ReadyToSend(int readyToSend)
+        {
+            HttpClient cliente = new HttpClient();
+            HttpResponseMessage response = new HttpResponseMessage();
+            string resultado = await cliente.GetStringAsync("http://10.10.10.10/readytosend/?param=" + readyToSend);
+            return resultado;
+        }
+        #endregion 
     }
+    #endregion
 }
+
 
 /*
  *NOTAS: 

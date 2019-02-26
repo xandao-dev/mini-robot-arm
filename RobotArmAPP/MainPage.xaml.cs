@@ -24,8 +24,6 @@ namespace RobotArmAPP
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
             MenuBlocker = LeftMenu;
-
-            WifiCheckerTimer = new DispatcherTimer();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e) //Define o tamanho minimo do aplicativo -> Page_SizeChanged está definido no xaml
@@ -43,6 +41,7 @@ namespace RobotArmAPP
 
             wiFiAPConnection.RequestWifiAcess();
 
+            WifiCheckerTimer = new DispatcherTimer();
             WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
             WifiCheckerTimer.Interval = TimeSpan.FromMilliseconds(500.0);
             WifiCheckerTimer.Start();
