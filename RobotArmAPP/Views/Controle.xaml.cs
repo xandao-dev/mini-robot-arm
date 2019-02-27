@@ -1,4 +1,5 @@
-﻿using RobotArmAPP.Classes;
+﻿using Newtonsoft.Json;
+using RobotArmAPP.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,8 +55,7 @@ namespace RobotArmAPP.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             wiFiAPConnection.RequestWifiAcess();
-            //btn_Click(this, new RoutedEventArgs());
-            //LoadJsonSaved();
+            await LoadJsonSaved();
 
             try
             {
@@ -382,12 +382,9 @@ namespace RobotArmAPP.Views
         private async void WifiCheckerTimer_Tick(object sender, object e)
         {
             int status = await wiFiAPConnection.WifiStatus(false, false);
-
             if (status == 1 && playing != true && changingControls != true)
             {
-                Blocker1.Visibility = Visibility.Collapsed;
-                Blocker2.Visibility = Visibility.Collapsed;
-                Blocker3.Visibility = Visibility.Collapsed;
+                LockControls(null, false);
             }
             else if (status != 1)
             {
@@ -396,52 +393,14 @@ namespace RobotArmAPP.Views
             }
             else
             {
-                /* Blocker1.Visibility = Visibility.Visible;
-                 Blocker2.Visibility = Visibility.Visible;
-                 Blocker3.Visibility = Visibility.Visible;*/
+                LockControls(null, true);
             }
-
             QuantidadeItens.Text = Convert.ToString(framesList.Count);
         }  /*ATIVAR*/ //Verifica o Wifi Para bloquear os Controles
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
-            FramesListView.SelectedIndex = currentFrame;
-
-            currentFrameArray = framesList[currentFrame];
-
-            GarraSlider.Value = currentFrameArray[0];
-            Eixo4Slider.Value = currentFrameArray[1];
-            Eixo3Slider.Value = currentFrameArray[2];
-            Eixo2Slider.Value = currentFrameArray[3];
-            Eixo1Slider.Value = currentFrameArray[4];
-            FrameSpeedBox.Text = Convert.ToString(currentFrameArray[5]);
-            DelayBox.Text = Convert.ToString(currentFrameArray[6]);
-
-            playbackTimer.Interval = TimeSpan.FromMilliseconds(currentFrameArray[6]);
-
-            if (framesList.Count > currentFrame + 1)
-            {
-                currentFrame++;
-            }
-            else
-            {
-                if (Convert.ToInt32(RepeatTimesBox.Text) == 0 && repeatTimes == 0)
-                {
-                    currentFrame = 0;
-                }
-                else if (Convert.ToInt32(RepeatTimesBox.Text) > 1)
-                {
-                    currentFrame = 0;
-                    RepeatTimesBox.Text = Convert.ToString(Convert.ToInt32(RepeatTimesBox.Text) - 1);
-                }
-                else
-                {
-                    RepeatTimesBox.Text = Convert.ToString(repeatTimes);
-                    IsPlaying(false);
-                }
-            }
-
+            PlaybackFunction();
         } // Timer que envia as sequencias no Play
         #endregion
 
@@ -499,215 +458,26 @@ namespace RobotArmAPP.Views
 
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker
-            {
-                ViewMode = PickerViewMode.Thumbnail,
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-            };
-            picker.FileTypeFilter.Add(".json");
-
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                try
-                {
-                    framesList.Clear();
-                    FramesListView.Items.Clear();
-
-                    var stream = await file.OpenAsync(FileAccessMode.Read);
-                    using (StreamReader reader = new StreamReader(stream.AsStream()))
-                    {
-                        while (reader.Peek() > 0)
-                        {
-                            okToSend = false;
-
-                            double garraCurrent = GarraSlider.Value;
-                            double axis4Current = Eixo4Slider.Value;
-                            double axis3Current = Eixo3Slider.Value;
-                            double axis2Current = Eixo2Slider.Value;
-                            double axis1Current = Eixo1Slider.Value;
-                            string speedCurrent = FrameSpeedBox.Text;
-                            string delayCurrent = DelayBox.Text;
-
-                            var moves = Moves.FromJson(reader.ReadToEnd());
-                            for (int i = 0; i < moves.Movements.Count; i++)
-                            {
-                                int garra = Convert.ToInt16(moves.Movements[i].Garra);
-                                int axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
-                                int axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
-                                int axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
-                                int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
-                                int speed = Convert.ToInt16(moves.Movements[i].Speed);
-                                int delay = Convert.ToInt32(moves.Movements[i].Delay);
-                                framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
-                                FramesListView.Items.Add(ListToString());
-                            }
-
-                            RepeatTimesBox.Text = moves.RepeatTimes.ToString();
-                            FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
-
-                            GarraSlider.Value = garraCurrent;
-                            Eixo4Slider.Value = axis4Current;
-                            Eixo3Slider.Value = axis3Current;
-                            Eixo2Slider.Value = axis2Current;
-                            Eixo1Slider.Value = axis1Current;
-                            FrameSpeedBox.Text = speedCurrent;
-                            DelayBox.Text = delayCurrent;
-
-                            okToSend = true;
-                        }
-                    }
-                }
-                catch
-                {
-                    var dialog = new MessageDialog("File Invalid or Corrupted!", "Error");
-                    await dialog.ShowAsync();
-                }
-            }
+            await OpenJsonWithFilePicker();
         }
 
-        private async void AutoSaveJson()
+        private async Task AutoSaveJson()
         {
             if (framesList.Count <= 0)
             {
                 return;
             }
-
-            try
-            {
-                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("autoSaveRobot.json", CreationCollisionOption.ReplaceExisting);
-
-                CachedFileManager.DeferUpdates(autoSaveFile); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
-                string repeatTimes = string.Format("{0:D5}", RepeatTimesBox.Text);
-                await FileIO.WriteTextAsync(autoSaveFile, "{\"repeatTimes\":" + repeatTimes + ",\"moves\":[");
-                for (int i = 0; i < framesList.Count; i++) //salva os frames linha por linha
-                {
-                    string garra = string.Format("{0:D3}", framesList[i][0]);
-                    string axis4 = string.Format("{0:D3}", framesList[i][1]);
-                    string axis3 = string.Format("{0:D3}", framesList[i][2]);
-                    string axis2 = string.Format("{0:D3}", framesList[i][3]);
-                    string axis1 = string.Format("{0:D3}", framesList[i][4]);
-                    string speed = string.Format("{0:D3}", framesList[i][5]);
-                    string delay = string.Format("{0:D6}", framesList[i][6]);
-
-                    await FileIO.AppendTextAsync(autoSaveFile, "{\"garra\":\"" + garra + "\",\"axis4\":\"" + axis4 + "\",\"axis3\":\"" + axis3 + "\",\"axis2\":\"" + axis2 + "\",\"axis1\":\"" + axis1 + "\",\"speed\":\"" + speed + "\",\"delay\":\"" + delay + "\"}");
-                    if (i != framesList.Count - 1)
-                    {
-                        await FileIO.AppendTextAsync(autoSaveFile, ",");
-                    }
-                }
-
-                await FileIO.AppendTextAsync(autoSaveFile, "]}");
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile); //permite que outros programas editem o arquivo
-            }
-            catch { }
+            await JsonSaver();
         }
 
         private async Task LoadJsonSaved()
         {
-            if (App.FirstStart == false)
-            {
-                try
-                {
-                    StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                    string text = await FileIO.ReadTextAsync(autoSaveFile);
-
-                    var moves = Moves.FromJson(text);
-                    for (int i = 0; i < moves.Movements.Count; i++)
-                    {
-                        int garra = Convert.ToInt16(moves.Movements[i].Garra);
-                        int axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
-                        int axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
-                        int axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
-                        int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
-                        int speed = Convert.ToInt16(moves.Movements[i].Speed);
-                        int delay = Convert.ToInt32(moves.Movements[i].Delay);
-                        framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
-                        FramesListView.Items.Add(ListToString());
-                    }
-                    RepeatTimesBox.Text = moves.RepeatTimes.ToString();
-                    FramesListView.UpdateLayout();
-                    FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
-                }
-                catch (Exception ex)
-                { //manipular
-                    var dialog = new MessageDialog(ex.ToString());
-                    await dialog.ShowAsync();
-
-                    Thread.Sleep(250);
-                    try
-                    {
-                        await GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
-                    }
-                    catch { }
-                }
-            }
-            else if (App.FirstStart == true)
-            {
-                App.FirstStart = false;
-                try
-                {
-                    StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                    if (autoSaveFile != null)
-                    {
-                        var dialog = new MessageDialog("Do you want to restore the last session?", "Restoration");
-                        dialog.Commands.Add(new UICommand { Label = "Yes", Id = 0 });
-                        dialog.Commands.Add(new UICommand { Label = "No", Id = 1 });
-                        var resposta = await dialog.ShowAsync();
-                        if ((int)resposta.Id == 0)
-                        {
-                            try
-                            {
-                                string text = await FileIO.ReadTextAsync(autoSaveFile);
-
-                                var moves = Moves.FromJson(text);
-                                for (int i = 0; i < moves.Movements.Count; i++)
-                                {
-                                    int garra = Convert.ToInt16(moves.Movements[i].Garra);
-                                    int axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
-                                    int axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
-                                    int axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
-                                    int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
-                                    int speed = Convert.ToInt16(moves.Movements[i].Speed);
-                                    int delay = Convert.ToInt32(moves.Movements[i].Delay);
-                                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
-                                    FramesListView.Items.Add(ListToString());
-                                }
-                                RepeatTimesBox.Text = moves.RepeatTimes.ToString();
-                                FramesListView.UpdateLayout();
-                                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
-                            }
-                            catch
-                            {
-                                Thread.Sleep(250);
-                                try
-                                {
-                                    await GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
-                                }
-                                catch { }
-                            }
-                        }
-                        else
-                        {
-                            DeleteJsonSaved();
-                        }
-                    }
-                }
-                catch { }
-            }
+            await JsonLoader();
         }
 
         private async void DeleteJsonSaved()
         {
-            try
-            {
-                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                if (autoSaveFile != null)
-                {
-                    await autoSaveFile.DeleteAsync();
-                }
-            }
-            catch { }
+            await DeleteAutoSavedJson();
         }
         #endregion
 
@@ -1060,37 +830,7 @@ namespace RobotArmAPP.Views
             }
         }
 
-        private string SelectedItemListToString(int delay)
-        {
-            int selected = FramesListView.SelectedIndex;
-            int[] selectedArray = framesList[selected];
-            try
-            {
-                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                int frameDelay = Convert.ToInt32(DelayBox.Text);
-                string add = "[";
-                add += selectedArray[0].ToString("000");
-                add += ",";
-                add += selectedArray[1].ToString("000");
-                add += ",";
-                add += selectedArray[2].ToString("000");
-                add += ",";
-                add += selectedArray[3].ToString("000");
-                add += ",";
-                add += selectedArray[4].ToString("000");
-                add += "]";
-                add += " Speed: ";
-                add += selectedArray[5].ToString("000");
-                add += ", Delay: ";
-                add += delay.ToString("000000");
-                add += "ms";
-                return add;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+
 
 
 
@@ -1104,14 +844,14 @@ namespace RobotArmAPP.Views
                 if (FramesListView.SelectedItems.Count > 0)
                 {
                     framesList.Insert(FramesListView.SelectedIndex + 1, new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                    string add = ListToString();
+                    string add = SlidersToString();
                     FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, add);
                     FramesListView.SelectedIndex = FramesListView.SelectedIndex + 1;
                 }
                 else
                 {
                     framesList.Add(new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                    string add = ListToString();
+                    string add = SlidersToString();
                     FramesListView.Items.Add(add);
                     FramesListView.SelectedIndex = framesList.Count() - 1;
                 }
@@ -1125,7 +865,7 @@ namespace RobotArmAPP.Views
             {
                 int selectedIndex = FramesListView.SelectedIndex;
                 framesList[selectedIndex] = new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text) };
-                FramesListView.Items.Insert(selectedIndex, ListToString());
+                FramesListView.Items.Insert(selectedIndex, SlidersToString());
                 FramesListView.Items.RemoveAt(selectedIndex + 1);
                 FramesListView.SelectedIndex = selectedIndex;
             }
@@ -1169,7 +909,41 @@ namespace RobotArmAPP.Views
             catch { }
         }
 
-        private string ListToString()
+
+
+        private string SelectedItemListToString(int delay)
+        {
+            int selected = FramesListView.SelectedIndex;
+            int[] selectedArray = framesList[selected];
+            try
+            {
+                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
+                int frameDelay = Convert.ToInt32(DelayBox.Text);
+                string add = "[";
+                add += selectedArray[0].ToString("000");
+                add += ",";
+                add += selectedArray[1].ToString("000");
+                add += ",";
+                add += selectedArray[2].ToString("000");
+                add += ",";
+                add += selectedArray[3].ToString("000");
+                add += ",";
+                add += selectedArray[4].ToString("000");
+                add += "]";
+                add += " Speed: ";
+                add += selectedArray[5].ToString("000");
+                add += ", Delay: ";
+                add += delay.ToString("000000");
+                add += "ms";
+                return add;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string SlidersToString()
         {
             try
             {
@@ -1199,6 +973,264 @@ namespace RobotArmAPP.Views
             }
         }
 
+        private string DirectFromListToString(int garra, int axis4, int axis3, int axis2, int axis1, int speed, int delay)
+        {
+            try
+            {
+                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
+                int frameDelay = Convert.ToInt32(DelayBox.Text);
+                string add = "[";
+                add += garra.ToString("000");
+                add += ",";
+                add += axis4.ToString("000");
+                add += ",";
+                add += axis3.ToString("000");
+                add += ",";
+                add += axis2.ToString("000");
+                add += ",";
+                add += axis1.ToString("000");
+                add += "]";
+                add += " Speed: ";
+                add += speed.ToString("000");
+                add += ", Delay: ";
+                add += delay.ToString("000000");
+                add += "ms";
+                return add;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+
+        public void PlaybackFunction()
+        {
+            FramesListView.SelectedIndex = currentFrame;
+            currentFrameArray = framesList[currentFrame];
+            GarraSlider.Value = currentFrameArray[0];
+            Eixo4Slider.Value = currentFrameArray[1];
+            Eixo3Slider.Value = currentFrameArray[2];
+            Eixo2Slider.Value = currentFrameArray[3];
+            Eixo1Slider.Value = currentFrameArray[4];
+            FrameSpeedBox.Text = Convert.ToString(currentFrameArray[5]);
+            DelayBox.Text = Convert.ToString(currentFrameArray[6]);
+            playbackTimer.Interval = TimeSpan.FromMilliseconds(currentFrameArray[6]);
+
+            if (framesList.Count > currentFrame + 1)
+            {
+                currentFrame++;
+            }
+            else
+            {
+                if (Convert.ToInt32(RepeatTimesBox.Text) == 0 && repeatTimes == 0)
+                {
+                    currentFrame = 0;
+                }
+                else if (Convert.ToInt32(RepeatTimesBox.Text) > 1)
+                {
+                    currentFrame = 0;
+                    RepeatTimesBox.Text = Convert.ToString(Convert.ToInt32(RepeatTimesBox.Text) - 1);
+                }
+                else
+                {
+                    RepeatTimesBox.Text = Convert.ToString(repeatTimes);
+                    IsPlaying(false);
+                }
+            }
+        }
+
+
+        public async Task JsonSaver()
+        {
+            try
+            {
+                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("autoSaveRobot.json", CreationCollisionOption.ReplaceExisting);
+                CachedFileManager.DeferUpdates(autoSaveFile); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
+
+                string repeatTimes = string.Format("{0:D5}", RepeatTimesBox.Text);
+                await FileIO.WriteTextAsync(autoSaveFile, "{\"rpt\":" + repeatTimes + ",\"mov\":");
+                var json = JsonConvert.SerializeObject(framesList);
+                await FileIO.AppendTextAsync(autoSaveFile, json);
+                await FileIO.AppendTextAsync(autoSaveFile, "}");
+                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile); //permite que outros programas editem o arquivo
+            }
+            catch { }
+        }
+
+        public async Task JsonLoader()
+        {
+            if (App.FirstStart == false)
+            {
+                try
+                {
+                    StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
+                    string text = await FileIO.ReadTextAsync(autoSaveFile);
+                    var moves = Moves.FromJson(text);
+                    for (int i = 0; i < moves.Mov.Count; i++)
+                    {
+                        int garra = Convert.ToInt16(moves.Mov[i][0].ToString());
+                        int axis4 = Convert.ToInt16(moves.Mov[i][1].ToString());
+                        int axis3 = Convert.ToInt16(moves.Mov[i][2].ToString());
+                        int axis2 = Convert.ToInt16(moves.Mov[i][3].ToString());
+                        int axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
+                        int speed = Convert.ToInt16(moves.Mov[i][5].ToString());
+                        int delay = Convert.ToInt32(moves.Mov[i][6].ToString());
+                        framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                        FramesListView.Items.Add(DirectFromListToString(garra, axis4, axis3, axis2, axis1, speed, delay));
+                    }
+                    RepeatTimesBox.Text = moves.Rpt.ToString();
+                    FramesListView.UpdateLayout();
+                    FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+                }
+                catch
+                { //manipular
+                    Thread.Sleep(250);
+                    try
+                    {
+                        await GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
+                    }
+                    catch { }
+                }
+            }
+            else if (App.FirstStart == true)
+            {
+                App.FirstStart = false;
+                try
+                {
+                    StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
+                    if (autoSaveFile != null)
+                    {
+                        var dialog = new MessageDialog("Do you want to restore the last session?", "Restoration");
+                        dialog.Commands.Add(new UICommand { Label = "Yes", Id = 0 });
+                        dialog.Commands.Add(new UICommand { Label = "No", Id = 1 });
+                        var resposta = await dialog.ShowAsync();
+                        if ((int)resposta.Id == 0)
+                        {
+                            try
+                            {
+                                string text = await FileIO.ReadTextAsync(autoSaveFile);
+
+                                var moves = Moves.FromJson(text);
+                                for (int i = 0; i < moves.Mov.Count; i++)
+                                {
+                                    int garra = Convert.ToInt16(moves.Mov[i][0]);
+                                    int axis4 = Convert.ToInt16(moves.Mov[i][1]);
+                                    int axis3 = Convert.ToInt16(moves.Mov[i][2]);
+                                    int axis2 = Convert.ToInt16(moves.Mov[i][3]);
+                                    int axis1 = Convert.ToInt16(moves.Mov[i][4]);
+                                    int speed = Convert.ToInt16(moves.Mov[i][5]);
+                                    int delay = Convert.ToInt32(moves.Mov[i][6]);
+                                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                                    FramesListView.Items.Add(DirectFromListToString(garra, axis4, axis3, axis2, axis1, speed, delay));
+                                }
+                                RepeatTimesBox.Text = moves.Rpt.ToString();
+                                FramesListView.UpdateLayout();
+                                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+                            }
+                            catch
+                            {
+                                Thread.Sleep(250);
+                                try
+                                {
+                                    await GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
+                                }
+                                catch { }
+                            }
+                        }
+                        else
+                        {
+                            DeleteJsonSaved();
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public async Task OpenJsonWithFilePicker()
+        {
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            picker.FileTypeFilter.Add(".json");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    framesList.Clear();
+                    FramesListView.Items.Clear();
+
+                    var stream = await file.OpenAsync(FileAccessMode.Read);
+                    using (StreamReader reader = new StreamReader(stream.AsStream()))
+                    {
+                        while (reader.Peek() > 0)
+                        {
+                            okToSend = false;
+
+                            double garraCurrent = GarraSlider.Value;
+                            double axis4Current = Eixo4Slider.Value;
+                            double axis3Current = Eixo3Slider.Value;
+                            double axis2Current = Eixo2Slider.Value;
+                            double axis1Current = Eixo1Slider.Value;
+                            string speedCurrent = FrameSpeedBox.Text;
+                            string delayCurrent = DelayBox.Text;
+
+                            var moves = Moves.FromJson(reader.ReadToEnd());
+                            for (int i = 0; i < moves.Movements.Count; i++)
+                            {
+                                int garra = Convert.ToInt16(moves.Movements[i].Garra);
+                                int axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
+                                int axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
+                                int axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
+                                int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
+                                int speed = Convert.ToInt16(moves.Movements[i].Speed);
+                                int delay = Convert.ToInt32(moves.Movements[i].Delay);
+                                framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                                FramesListView.Items.Add(SlidersToString());
+                            }
+
+                            RepeatTimesBox.Text = moves.RepeatTimes.ToString();
+                            FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+
+                            GarraSlider.Value = garraCurrent;
+                            Eixo4Slider.Value = axis4Current;
+                            Eixo3Slider.Value = axis3Current;
+                            Eixo2Slider.Value = axis2Current;
+                            Eixo1Slider.Value = axis1Current;
+                            FrameSpeedBox.Text = speedCurrent;
+                            DelayBox.Text = delayCurrent;
+
+                            okToSend = true;
+                        }
+                    }
+                }
+                catch
+                {
+                    var dialog = new MessageDialog("File Invalid or Corrupted!", "Error");
+                    await dialog.ShowAsync();
+                }
+            }
+        }
+
+        public async Task DeleteAutoSavedJson()
+        {
+            try
+            {
+                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
+                if (autoSaveFile != null)
+                {
+                    await autoSaveFile.DeleteAsync();
+                }
+            }
+            catch { }
+        }
+
         #region HTTP REQUESTS 
         private async Task<string> GetRequest(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor)
         {
@@ -1221,11 +1253,10 @@ namespace RobotArmAPP.Views
             string resultado = await cliente.GetStringAsync("http://10.10.10.10/readytosend/?param=" + readyToSend);
             return resultado;
         }
-        #endregion 
+        #endregion
+        #endregion
     }
-    #endregion
 }
-
 
 /*
  *NOTAS: 

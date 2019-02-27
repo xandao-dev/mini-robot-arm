@@ -21,6 +21,12 @@ namespace RobotArmAPP.Classes
 
         [JsonProperty("moves")]
         public List<Move> Movements { get; set; }
+
+        [JsonProperty("rpt")]
+        public long Rpt { get; set; }
+
+        [JsonProperty("mov")]
+        public List<List<long>> Mov { get; set; }
     }
 
     public partial class Move
@@ -66,6 +72,4 @@ namespace RobotArmAPP.Classes
             Converters = { new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal } }
         };
     }
-
-
 }
