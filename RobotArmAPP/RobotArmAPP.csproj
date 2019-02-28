@@ -97,7 +97,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Json.cs" />
+    <Compile Include="Classes\ConvertToString.cs" />
+    <Compile Include="Classes\HTTPRequests.cs" />
+    <Compile Include="Classes\JsonMovesSerializeAndDeserialize.cs" />
+    <Compile Include="Classes\JsonSaverAndLoader.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
