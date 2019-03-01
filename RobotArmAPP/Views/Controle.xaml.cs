@@ -34,7 +34,6 @@ namespace RobotArmAPP.Views
         #region INSTANCE FIELDS
         private DispatcherTimer WifiCheckerTimer;
         private DispatcherTimer playbackTimer;
-        private DispatcherTimer loadJsonTimer;
 
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
         HTTPRequests httpRequests = new HTTPRequests();
@@ -51,7 +50,7 @@ namespace RobotArmAPP.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             wiFiAPConnection.RequestWifiAcess();
-            await jsonSaverAndLoader.JsonAutoLoader();
+            await jsonSaverAndLoader.JsonAutoLoader(framesList, FramesListView, RepeatTimesBox);
             try
             {
                 await httpRequests.ReadyToSend(200);
@@ -404,7 +403,25 @@ namespace RobotArmAPP.Views
 
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.OpenJsonWithFilePicker(okToSend);
+            okToSend = false;
+            double garraCurrent = GarraSlider.Value;
+            double axis4Current = Eixo4Slider.Value;
+            double axis3Current = Eixo3Slider.Value;
+            double axis2Current = Eixo2Slider.Value;
+            double axis1Current = Eixo1Slider.Value;
+            string speedCurrent = FrameSpeedBox.Text;
+            string delayCurrent = DelayBox.Text;
+
+            await jsonSaverAndLoader.OpenJsonWithFilePicker(framesList, FramesListView, RepeatTimesBox);
+
+            GarraSlider.Value = garraCurrent;
+            Eixo4Slider.Value = axis4Current;
+            Eixo3Slider.Value = axis3Current;
+            Eixo2Slider.Value = axis2Current;
+            Eixo1Slider.Value = axis1Current;
+            FrameSpeedBox.Text = speedCurrent;
+            DelayBox.Text = delayCurrent;
+            okToSend = true;
         }
         #endregion
 
@@ -433,11 +450,7 @@ namespace RobotArmAPP.Views
 
         public async Task SendAxisValuesToEsp()
         {
-            try
-            {
-                await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-            }
-            catch { }
+            await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
         }
 
         private void SwitchAxisBoxToSlider(int axis)
@@ -527,12 +540,8 @@ namespace RobotArmAPP.Views
         {
             if (liveBoxStatus == true && okToSend == true)
             {
-                try
-                {
-                    SwitchAxisSliderToBox(axis);
-                    await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-                }
-                catch { }
+                SwitchAxisSliderToBox(axis);
+                await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
             }
             else
             {

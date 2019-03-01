@@ -1,14 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace RobotArmAPP.Classes
 {
@@ -38,39 +37,19 @@ namespace RobotArmAPP.Classes
             catch { }
         }
 
-        public async Task JsonAutoLoader()
+        public async Task JsonAutoLoader(List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
         {
             if (App.FirstStart == false)
             {
                 try
                 {
                     StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                    string text = await FileIO.ReadTextAsync(autoSaveFile);
-                    var moves = Moves.FromJson(text);
-                    for (int i = 0; i < moves.Mov.Count; i++)
-                    {
-                        int garra = Convert.ToInt16(moves.Mov[i][0].ToString());
-                        int axis4 = Convert.ToInt16(moves.Mov[i][1].ToString());
-                        int axis3 = Convert.ToInt16(moves.Mov[i][2].ToString());
-                        int axis2 = Convert.ToInt16(moves.Mov[i][3].ToString());
-                        int axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
-                        int speed = Convert.ToInt16(moves.Mov[i][5].ToString());
-                        int delay = Convert.ToInt32(moves.Mov[i][6].ToString());
-                        framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
-                        FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
-                    }
-                    RepeatTimesBox.Text = moves.Rpt.ToString();
-                    FramesListView.UpdateLayout();
-                    FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+                    await ConvertingJsonToList(autoSaveFile, false, framesList, FramesListView, RepeatTimesBox);
                 }
                 catch
                 { //manipular
                     Thread.Sleep(250);
-                    try
-                    {
-                        await httpRequests.GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
-                    }
-                    catch { }
+                    await httpRequests.GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
                 }
             }
             else if (App.FirstStart == true)
@@ -89,33 +68,12 @@ namespace RobotArmAPP.Classes
                         {
                             try
                             {
-                                string text = await FileIO.ReadTextAsync(autoSaveFile);
-
-                                var moves = Moves.FromJson(text);
-                                for (int i = 0; i < moves.Mov.Count; i++)
-                                {
-                                    int garra = Convert.ToInt16(moves.Mov[i][0]);
-                                    int axis4 = Convert.ToInt16(moves.Mov[i][1]);
-                                    int axis3 = Convert.ToInt16(moves.Mov[i][2]);
-                                    int axis2 = Convert.ToInt16(moves.Mov[i][3]);
-                                    int axis1 = Convert.ToInt16(moves.Mov[i][4]);
-                                    int speed = Convert.ToInt16(moves.Mov[i][5]);
-                                    int delay = Convert.ToInt32(moves.Mov[i][6]);
-                                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
-                                    FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
-                                }
-                                RepeatTimesBox.Text = moves.Rpt.ToString();
-                                FramesListView.UpdateLayout();
-                                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+                                await ConvertingJsonToList(autoSaveFile, false, framesList, FramesListView, RepeatTimesBox);
                             }
                             catch
                             {
                                 Thread.Sleep(250);
-                                try
-                                {
-                                    await httpRequests.GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
-                                }
-                                catch { }
+                                await httpRequests.GetRequest(Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90), Convert.ToString(90));
                             }
                         }
                         else
@@ -142,7 +100,130 @@ namespace RobotArmAPP.Classes
         }
 
 
-        public async Task OpenJsonWithFilePicker(bool okToSend)
+        public async Task OpenJsonWithFilePicker(List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
+        {
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.Thumbnail,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            picker.FileTypeFilter.Add(".json");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    framesList.Clear();
+                    FramesListView.Items.Clear();
+                    await ConvertingJsonToList(file, true, framesList, FramesListView, RepeatTimesBox);
+                }
+                catch
+                {
+                    var dialog = new MessageDialog("File Invalid or Corrupted!", "Error");
+                    await dialog.ShowAsync();
+                }
+            }
+        }
+
+        public async Task SaveJsonWithFilePicker(List<int[]> framesList, string RepeatTimes)
+        {
+            if (framesList.Count <= 0)
+            {
+                return;
+            }
+
+            FileSavePicker savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            savePicker.FileTypeChoices.Add("JSON File", new List<string>() { ".json" });
+            savePicker.SuggestedFileName = "Frames";
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                /*SERIALIZACAO MANUAL EM JSON*/
+                try
+                {
+                    CachedFileManager.DeferUpdates(file); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
+                    string repeatTimes = string.Format("{0:D5}", RepeatTimes);
+                    await FileIO.WriteTextAsync(file, "{\"repeatTimes\":" + repeatTimes + ",\"moves\":[");
+                    for (int i = 0; i < framesList.Count; i++) //salva os frames linha por linha
+                    {
+                        string garra = string.Format("{0:D3}", framesList[i][0]);
+                        string axis4 = string.Format("{0:D3}", framesList[i][1]);
+                        string axis3 = string.Format("{0:D3}", framesList[i][2]);
+                        string axis2 = string.Format("{0:D3}", framesList[i][3]);
+                        string axis1 = string.Format("{0:D3}", framesList[i][4]);
+                        string speed = string.Format("{0:D3}", framesList[i][5]);
+                        string delay = string.Format("{0:D6}", framesList[i][6]);
+
+                        await FileIO.AppendTextAsync(file, "{\"garra\":\"" + garra + "\",\"axis4\":\"" + axis4 + "\",\"axis3\":\"" + axis3 + "\",\"axis2\":\"" + axis2 + "\",\"axis1\":\"" + axis1 + "\",\"speed\":\"" + speed + "\",\"delay\":\"" + delay + "\"}");
+                        if (i != framesList.Count - 1)
+                        {
+                            await FileIO.AppendTextAsync(file, ",");
+                        }
+                    }
+
+                    await FileIO.AppendTextAsync(file, "]}");
+                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file); //permite que outros programas editem o arquivo
+                                                                                                  /*FIM DA SERIALIZACAO MANUAL*/
+                }
+                catch (Exception ex)
+                {
+                    var dialog = new MessageDialog("Error saving the file.\n" + ex.Message);
+                    await dialog.ShowAsync();
+                }
+            }
+        }
+
+
+        private async Task ConvertingJsonToList(StorageFile file, bool jsonReadable, List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
+        {
+            string text = await FileIO.ReadTextAsync(file);
+            var moves = Moves.FromJson(text);
+
+            if (jsonReadable == true)
+            {
+                for (int i = 0; i < moves.Movements.Count; i++)
+                {
+                    int garra = Convert.ToInt16(moves.Movements[i].Garra);
+                    int axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
+                    int axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
+                    int axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
+                    int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
+                    int speed = Convert.ToInt16(moves.Movements[i].Speed);
+                    int delay = Convert.ToInt32(moves.Movements[i].Delay);
+                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                    FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
+                }
+                RepeatTimesBox.Text = moves.RepeatTimes.ToString();
+                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+            }
+            else
+            {
+                for (int i = 0; i < moves.Mov.Count; i++)
+                {
+                    int garra = Convert.ToInt16(moves.Mov[i][0].ToString());
+                    int axis4 = Convert.ToInt16(moves.Mov[i][1].ToString());
+                    int axis3 = Convert.ToInt16(moves.Mov[i][2].ToString());
+                    int axis2 = Convert.ToInt16(moves.Mov[i][3].ToString());
+                    int axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
+                    int speed = Convert.ToInt16(moves.Mov[i][5].ToString());
+                    int delay = Convert.ToInt32(moves.Mov[i][6].ToString());
+                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                    FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
+                }
+                RepeatTimesBox.Text = moves.Rpt.ToString();
+                FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
+            }
+        }
+    }
+}
+
+
+/*
+ public async Task OpenJsonWithFilePicker(bool okToSend)
         {
             var picker = new FileOpenPicker
             {
@@ -210,56 +291,4 @@ namespace RobotArmAPP.Classes
                 }
             }
         }
-
-        public async Task SaveJsonWithFilePicker(List<int[]> framesList, string RepeatTimes)
-        {
-            if (framesList.Count <= 0)
-            {
-                return;
-            }
-
-            FileSavePicker savePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-            };
-            savePicker.FileTypeChoices.Add("JSON File", new List<string>() { ".json" });
-            savePicker.SuggestedFileName = "Frames";
-            StorageFile file = await savePicker.PickSaveFileAsync();
-            if (file != null)
-            {
-                /*SERIALIZACAO MANUAL EM JSON*/
-                try
-                {
-                    CachedFileManager.DeferUpdates(file); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
-                    string repeatTimes = string.Format("{0:D5}", RepeatTimes);
-                    await FileIO.WriteTextAsync(file, "{\"repeatTimes\":" + repeatTimes + ",\"moves\":[");
-                    for (int i = 0; i < framesList.Count; i++) //salva os frames linha por linha
-                    {
-                        string garra = string.Format("{0:D3}", framesList[i][0]);
-                        string axis4 = string.Format("{0:D3}", framesList[i][1]);
-                        string axis3 = string.Format("{0:D3}", framesList[i][2]);
-                        string axis2 = string.Format("{0:D3}", framesList[i][3]);
-                        string axis1 = string.Format("{0:D3}", framesList[i][4]);
-                        string speed = string.Format("{0:D3}", framesList[i][5]);
-                        string delay = string.Format("{0:D6}", framesList[i][6]);
-
-                        await FileIO.AppendTextAsync(file, "{\"garra\":\"" + garra + "\",\"axis4\":\"" + axis4 + "\",\"axis3\":\"" + axis3 + "\",\"axis2\":\"" + axis2 + "\",\"axis1\":\"" + axis1 + "\",\"speed\":\"" + speed + "\",\"delay\":\"" + delay + "\"}");
-                        if (i != framesList.Count - 1)
-                        {
-                            await FileIO.AppendTextAsync(file, ",");
-                        }
-                    }
-
-                    await FileIO.AppendTextAsync(file, "]}");
-                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file); //permite que outros programas editem o arquivo
-                                                                                                  /*FIM DA SERIALIZACAO MANUAL*/
-                }
-                catch (Exception ex)
-                {
-                    var dialog = new MessageDialog("Error saving the file.\n" + ex.Message);
-                    await dialog.ShowAsync();
-                }
-            }
-        }
-    }
-}
+     */
