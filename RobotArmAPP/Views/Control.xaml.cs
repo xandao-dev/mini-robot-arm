@@ -14,16 +14,17 @@ using Windows.UI.Xaml.Navigation;
 
 namespace RobotArmAPP.Views
 {
-    public sealed partial class Controller : Page
+    public sealed partial class Control : Page
     {
         #region VARIABLES
         private bool okToSend = true;
-        private bool playing = false; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        private bool playing = false; //usado para funções de Control programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
         private bool changingControls = false;
         private bool liveBoxStatus = true; //Váriavel de leitura, mudar ela não altera a liveBoxStatus
+        //private int ConnectionStatus = 2; //1 = conectado  e  2 = desconectado
         private int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
-        private int currentFrame = 0; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
-        private int[] currentFrameArray; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        private int currentFrame = 0; //usado para funções de Control programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        private int[] currentFrameArray; //usado para funções de Control programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
         #endregion
 
         #region OBJECTS
@@ -41,7 +42,7 @@ namespace RobotArmAPP.Views
         #endregion
 
         #region INITIALIZATION
-        public Controller()
+        public Control()
         {
             this.InitializeComponent();
         }
@@ -57,7 +58,7 @@ namespace RobotArmAPP.Views
             catch { }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)//object sender
         {
             playbackTimer = new DispatcherTimer();
             playbackTimer.Tick += PlaybackTimer_Tick;
@@ -249,7 +250,7 @@ namespace RobotArmAPP.Views
         #region CONTROLS
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            await SendAxisValuesToEsp();
+            await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
 
@@ -386,7 +387,7 @@ namespace RobotArmAPP.Views
                 LockControls(null, true);
             }
             QuantidadeItens.Text = Convert.ToString(framesList.Count);
-        }  /*ATIVAR*/ //Verifica o Wifi Para bloquear os Controles
+        }  /*ATIVAR*/ //Verifica o Wifi Para bloquear os Controls
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
@@ -432,7 +433,7 @@ namespace RobotArmAPP.Views
                 if (liveBoxStatus == true && okToSend == true)
                 {
                     SwitchAxisBoxToSlider(axis);
-                    await SendAxisValuesToEsp();
+                    await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
                 }
                 else
                 {
@@ -441,15 +442,11 @@ namespace RobotArmAPP.Views
 
                 if (playing == true)
                 {
-                    await SendAxisValuesToEsp();
+                    await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+
                 }
             }
             catch { }
-        }
-
-        public async Task SendAxisValuesToEsp()
-        {
-            await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
         }
 
         private void SwitchAxisBoxToSlider(int axis)
@@ -769,9 +766,6 @@ namespace RobotArmAPP.Views
                 FramesListView.SelectedIndex = selected;
             }
         }
-
-
-
 
 
         public void InsertFrameFunction()

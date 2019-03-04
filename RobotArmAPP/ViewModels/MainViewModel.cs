@@ -35,8 +35,8 @@ namespace RobotArmAPP.ViewModels
             List<MenuItem> menuItems = new List<MenuItem>
             {
                 new MenuItem() { Title = "Home", SymbolIcon = Symbol.Home, NavigateTo = typeof(Home) },
-                new MenuItem() { Title = "Connection", SymbolIcon = Symbol.Sync, NavigateTo = typeof(Conexao) },
-                new MenuItem() { Title = "Control", SymbolIcon = Symbol.Play, NavigateTo = typeof(Controle), },
+                new MenuItem() { Title = "Connection", SymbolIcon = Symbol.Sync, NavigateTo = typeof(Connection) },
+                new MenuItem() { Title = "Control", SymbolIcon = Symbol.Play, NavigateTo = typeof(Controller), },
                 new MenuItem() { Title = "Settings", SymbolIcon = Symbol.Setting, NavigateTo = typeof(Settings) }
             };
             

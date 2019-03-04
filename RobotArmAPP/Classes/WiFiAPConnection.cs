@@ -119,9 +119,9 @@ namespace RobotArmAPP
                         Password = PW
                     };
 
-                    WiFiReconnectionKind reconnectionKind = WiFiReconnectionKind.Automatic; //tipo de conexao
+                    WiFiReconnectionKind reconnectionKind = WiFiReconnectionKind.Automatic; //tipo de Connection
 
-                    await wifiAdapter.ConnectAsync(nw, reconnectionKind, credential); //a conexao
+                    await wifiAdapter.ConnectAsync(nw, reconnectionKind, credential); //a Connection
                 }
 
             }

@@ -12,22 +12,22 @@
         <Style TargetType="Slider" x:Key="SliderStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Slider">
+                    <ControllerTemplate TargetType="Slider">
                         <Grid Margin="{TemplateBinding Padding}">
                             <Grid.Resources>
                                 <Style x:Key="SliderThumbStyle" TargetType="Thumb">
                                     <Setter Property="BorderThickness" Value="0"/>
                                     <Setter Property="Template">
                                         <Setter.Value>
-                                            <ControlTemplate TargetType="Thumb">
+                                            <ControllerTemplate TargetType="Thumb">
                                                 <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="4"/>
-                                            </ControlTemplate>
+                                            </ControllerTemplate>
                                         </Setter.Value>
                                     </Setter>
                                 </Style>
                             </Grid.Resources>
 
-                            <Grid x:Name="SliderContainer" Background="Transparent" Control.IsTemplateFocusTarget="True" Grid.Row="1">
+                            <Grid x:Name="SliderContainer" Background="Transparent" Controller.IsTemplateFocusTarget="True" Grid.Row="1">
                                 <Grid x:Name="HorizontalTemplate" MinHeight="44">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -41,14 +41,14 @@
                                     </Grid.RowDefinitions>
                                     <Rectangle x:Name="HorizontalTrackRect" Grid.ColumnSpan="3" Fill="{TemplateBinding Background}" Height="{ThemeResource SliderTrackThemeHeight}" Grid.Row="1"/>
                                     <Rectangle x:Name="HorizontalDecreaseRect" Fill="{TemplateBinding Foreground}" Grid.Row="1"/>
-                                    <TickBar x:Name="TopTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Height="{ThemeResource SliderOutsideTickBarThemeHeight}" Margin="0,0,0,4" Visibility="Collapsed" VerticalAlignment="Bottom"/>
-                                    <TickBar x:Name="HorizontalInlineTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControlBackgroundAltHighBrush}" Height="{ThemeResource SliderTrackThemeHeight}" Grid.Row="1" Visibility="Collapsed"/>
-                                    <TickBar x:Name="BottomTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Height="{ThemeResource SliderOutsideTickBarThemeHeight}" Margin="0,4,0,0" Grid.Row="2" Visibility="Collapsed" VerticalAlignment="Top"/>
+                                    <TickBar x:Name="TopTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControllerForegroundBaseMediumLowBrush}" Height="{ThemeResource SliderOutsideTickBarThemeHeight}" Margin="0,0,0,4" Visibility="Collapsed" VerticalAlignment="Bottom"/>
+                                    <TickBar x:Name="HorizontalInlineTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControllerBackgroundAltHighBrush}" Height="{ThemeResource SliderTrackThemeHeight}" Grid.Row="1" Visibility="Collapsed"/>
+                                    <TickBar x:Name="BottomTickBar" Grid.ColumnSpan="3" Fill="{ThemeResource SystemControllerForegroundBaseMediumLowBrush}" Height="{ThemeResource SliderOutsideTickBarThemeHeight}" Margin="0,4,0,0" Grid.Row="2" Visibility="Collapsed" VerticalAlignment="Top"/>
                                     <Thumb x:Name="HorizontalThumb" AutomationProperties.AccessibilityView="Raw" Background="{TemplateBinding Foreground}" Grid.Column="1" DataContext="{TemplateBinding Value}" Height="24" Grid.Row="0" Grid.RowSpan="3" Style="{StaticResource SliderThumbStyle}" Width="8"/>
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -56,7 +56,7 @@
         <Style TargetType="CheckBox" x:Key="CheckBoxStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
+                    <ControllerTemplate TargetType="CheckBox">
                         <Grid Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -106,11 +106,11 @@
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
                                            Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                            Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -170,15 +170,15 @@
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle"
                                            Storyboard.TargetProperty="Stroke">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph"
                                            Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                            Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <DoubleAnimation Storyboard.TargetName="CheckGlyph"
                              Storyboard.TargetProperty="Opacity"
@@ -195,7 +195,7 @@
                             <Grid VerticalAlignment="Top" Height="32">
                                 <Rectangle x:Name="NormalRectangle"
                   Fill="Transparent"
-                  Stroke="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                  Stroke="{ThemeResource SystemControllerForegroundBaseMediumHighBrush}"
                   StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
                   UseLayoutRounding="False"
                   Height="20"
@@ -204,7 +204,7 @@
                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
                   Glyph="&#xE001;"
                   FontSize="20"
-                  Foreground="{ThemeResource SystemControlHighlightAltChromeWhiteBrush}"
+                  Foreground="{ThemeResource SystemControllerHighlightAltChromeWhiteBrush}"
                   Opacity="0" />
                             </Grid>
                             <ContentPresenter x:Name="ContentPresenter"
@@ -218,7 +218,7 @@
                       AutomationProperties.AccessibilityView="Raw"
                       TextWrapping="Wrap" />
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -227,7 +227,7 @@
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
+                    <ControllerTemplate TargetType="ListViewItem">
                         <Grid x:Name="ContentBorder"
               Background="Transparent"
               BorderBrush="Gray"
@@ -249,7 +249,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="#3FF7CC01"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                         </Storyboard>
@@ -264,7 +264,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="#7FF7CC01" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerDownThemeAnimation TargetName="ContentPresenter" />
                                         </Storyboard>
@@ -283,7 +283,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="#7FF7CC01" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                         </Storyboard>
@@ -302,7 +302,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="#FFF7CC01" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                         </Storyboard>
@@ -321,7 +321,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="#7FF7CC01" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerDownThemeAnimation TargetName="ContentPresenter" />
                                         </Storyboard>
@@ -484,9 +484,9 @@
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="BorderBackground"
                     IsHitTestVisible="False"
-                    Fill="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                    Fill="{ThemeResource SystemControllerHighlightListAccentLowBrush}"
                     Opacity="0"
-                    Control.IsTemplateFocusTarget="True"/>
+                    Controller.IsTemplateFocusTarget="True"/>
                             <Grid x:Name="ContentPresenterGrid"
               Background="Transparent"
               Margin="0,0,0,0">
@@ -520,7 +520,7 @@
                     Fill="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
                     Grid.ColumnSpan="2"/>
                             <Border x:Name="MultiSelectSquare"
-                BorderBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                BorderBrush="{ThemeResource SystemControllerForegroundBaseMediumHighBrush}"
                 BorderThickness="2"
                 Width="20"
                 Height="20"
@@ -542,14 +542,14 @@
                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                     Glyph="&#xE73E;"
                     FontSize="16"
-                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                    Foreground="{ThemeResource SystemControllerForegroundBaseMediumHighBrush}"
                     Visibility="Collapsed"
                     Opacity="0"/>
                             </Border>
                             <TextBlock x:Name="MultiArrangeOverlayText"
                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DragItemsCount}"
                     Foreground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                    FontFamily="{ThemeResource ContentControllerThemeFontFamily}"
                     FontSize="26.667"
                     IsHitTestVisible="False"
                     Opacity="0"
@@ -559,7 +559,7 @@
                     AutomationProperties.AccessibilityView="Raw"
                     Grid.ColumnSpan="2"/>
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -567,7 +567,7 @@
         <Style TargetType="Button" x:Key="ButtonStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
+                    <ControllerTemplate TargetType="Button">
                         <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -614,15 +614,15 @@
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                    Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerBackgroundBaseLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                    Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                    Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledTransparentBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -639,7 +639,7 @@
                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                           AutomationProperties.AccessibilityView="Raw"/>
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -647,13 +647,13 @@
         <Style TargetType="TextBox" x:Key="TextBoxStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
+                    <ControllerTemplate TargetType="TextBox">
                         <Grid>
                             <Grid.Resources>
                                 <Style x:Name="DeleteButtonStyle" TargetType="Button">
                                     <Setter Property="Template">
                                         <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
+                                            <ControllerTemplate TargetType="Button">
                                                 <Grid x:Name="ButtonLayoutGrid" BorderBrush="{ThemeResource TextBoxButtonBorderThemeBrush}"
                                                   BorderThickness="{TemplateBinding BorderThickness}"
                                                   Background="{ThemeResource TextBoxButtonBackgroundThemeBrush}">
@@ -691,7 +691,7 @@
                                                         </VisualStateGroup>
                                                     </VisualStateManager.VisualStateGroups>
                                                     <TextBlock x:Name="GlyphElement"
-                                Foreground="{ThemeResource SystemControlForegroundChromeBlackMediumBrush}"
+                                Foreground="{ThemeResource SystemControllerForegroundChromeBlackMediumBrush}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 FontStyle="Normal"
@@ -700,7 +700,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 AutomationProperties.AccessibilityView="Raw"/>
                                                 </Grid>
-                                            </ControlTemplate>
+                                            </ControllerTemplate>
                                         </Setter.Value>
                                     </Setter>
                                 </Style>
@@ -711,27 +711,27 @@
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter"
                                                  Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
                                                Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledTransparentBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerBackgroundBaseLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
                                                Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledChromeDisabledLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
                                                Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledChromeDisabledLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -756,7 +756,7 @@
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
                                                Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlPageTextChromeBlackMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerPageTextChromeBlackMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
                                                Storyboard.TargetProperty="Background">
@@ -772,7 +772,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
                                                Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundChromeBlackHighBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerForegroundChromeBlackHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
                                                Storyboard.TargetProperty="RequestedTheme">
@@ -822,7 +822,7 @@
                           x:DeferLoadStrategy="Lazy"
                           Visibility="Collapsed"
                           Grid.Row="0"
-                          Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                          Foreground="{ThemeResource SystemControllerForegroundBaseHighBrush}"
                           Margin="0,0,0,8"
                           Grid.ColumnSpan="2"
                           Content="{TemplateBinding Header}"
@@ -842,9 +842,9 @@
                       IsTabStop="False"
                       AutomationProperties.AccessibilityView="Raw"
                       ZoomMode="Disabled" />
-                            <ContentControl x:Name="PlaceholderTextContentPresenter"
+                            <ContentController x:Name="PlaceholderTextContentPresenter"
                       Grid.Row="1"
-                      Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                      Foreground="{ThemeResource SystemControllerPageTextBaseMediumBrush}"
                       Margin="{TemplateBinding BorderThickness}"
                       Padding="{TemplateBinding Padding}"
                       IsTabStop="False"
@@ -863,7 +863,7 @@
                 MinWidth="34"
                 VerticalAlignment="Stretch"/>
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -871,7 +871,7 @@
         <Style TargetType="AppBarButton" x:Key="AppBarButtonStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="AppBarButton">
+                    <ControllerTemplate TargetType="AppBarButton">
                         <Grid
             x:Name="Root"
             MinWidth="{TemplateBinding MinWidth}"
@@ -954,13 +954,13 @@
                                     <VisualState x:Name="Disabled">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowTextLabel" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -1010,13 +1010,13 @@
               Padding="0,5,0,7"
               Visibility="Collapsed"/>
                         </Grid>
-                    </ControlTemplate>
+                    </ControllerTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </Page.Resources>
 
-    <Grid x:Name="ControlGrid" FocusVisualPrimaryBrush="{x:Null}" FocusVisualSecondaryBrush="{x:Null}">
+    <Grid x:Name="ControllerGrid" FocusVisualPrimaryBrush="{x:Null}" FocusVisualSecondaryBrush="{x:Null}">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FF5D5E6A" Offset="0"/>
@@ -1038,10 +1038,10 @@
             <TextBox x:Name="FrameSpeedBox" Margin="205,175,50,0" Text="100" InputScope="Digits" VerticalAlignment="Top" Height="33" Background="#CCFFFFFF" SelectionHighlightColor="#FFF7CC01" BorderBrush="#FFF7CC01" KeyDown="FrameSpeedBox_KeyDown" HorizontalAlignment="Stretch" IsEnabled="True" KeyUp="FrameSpeedBox_KeyUp" LostFocus="FrameSpeedBox_LostFocus" Style="{StaticResource TextBoxStyle1}" SelectionHighlightColorWhenNotFocused="{x:Null}"/>
             <TextBlock HorizontalAlignment="Left" Margin="50,180,0,0" Text="Frame Speed (0-100%):" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
             <Border BorderBrush="Black" HorizontalAlignment="Center" Height="20" Margin="0,10,0,0" VerticalAlignment="Top" Width="112" BorderThickness="1,1,1,1" CornerRadius="5,5,5,5" Background="#FFF7F7F7">
-                <TextBlock Margin="7,0,0,0" Text="Frame Control" TextWrapping="Wrap" FontFamily="Arial Black"/>
+                <TextBlock Margin="7,0,0,0" Text="Frame Controller" TextWrapping="Wrap" FontFamily="Arial Black"/>
             </Border>
             <Border BorderBrush="Black" HorizontalAlignment="Center" Height="20" Margin="0,5,0,0" VerticalAlignment="Top" Width="127" BorderThickness="1,1,1,1" CornerRadius="5,5,5,5" Background="#FFF7F7F7" Grid.Row="1">
-                <TextBlock Margin="7,0,0,0" Text="Playback Control" TextWrapping="Wrap" FontFamily="Arial Black"/>
+                <TextBlock Margin="7,0,0,0" Text="Playback Controller" TextWrapping="Wrap" FontFamily="Arial Black"/>
             </Border>
             <TextBlock HorizontalAlignment="Left" Margin="50,175,0,0" Text="Repeat Times (0 = infinity):" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" Grid.Row="1"/>
             <TextBox x:Name="RepeatTimesBox" HorizontalAlignment="Left" InputScope="Digits" Margin="233,168,0,0" Text="0" VerticalAlignment="Top" Width="113" Background="#CCFFFFFF" SelectionHighlightColor="#FFF7CC01" BorderBrush="#FFF7CC01" Grid.Row="1" KeyDown="RepeatTimesBox_KeyDown" KeyUp="RepeatTimesBox_KeyUp" LostFocus="RepeatTimesBox_LostFocus" Style="{StaticResource TextBoxStyle1}"/>
@@ -1095,12 +1095,12 @@
             <TextBlock HorizontalAlignment="Left" Margin="23,0,0,0" Grid.Row="1" Text="Gripper" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
             <Border BorderBrush="Black" HorizontalAlignment="Left" Height="20" Margin="150,0,0,0" VerticalAlignment="Center" Width="100" BorderThickness="1,1,1,1" CornerRadius="5,5,5,5" Background="#FFF7F7F7">
-                <TextBlock Margin="7,0,0,0" Text="Arm Control" TextWrapping="Wrap" VerticalAlignment="Stretch" FontFamily="Arial Black"/>
+                <TextBlock Margin="7,0,0,0" Text="Arm Controller" TextWrapping="Wrap" VerticalAlignment="Stretch" FontFamily="Arial Black"/>
             </Border>
             <CheckBox x:Name="LiveBox" Content="Live" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.RowSpan="2" IsChecked="{x:Bind liveBoxStatus, Mode=TwoWay}" Foreground="White"  Style="{StaticResource CheckBoxStyle1}" />
             <AppBarButton x:Name="SendButton" HorizontalAlignment="Left" Icon="Play" Label="Send" Margin="31,60,0,0" Grid.Row="5" VerticalAlignment="Top" Height="76" Width="46" Click="SendButton_Click" Foreground="White" Style="{StaticResource AppBarButtonStyle1}" Grid.RowSpan="2" RenderTransformOrigin="0.707,0.52" Grid.Column="1"/>
             <Rectangle x:Name="Blocker1" Margin="-43,-38,-55,-80" Fill="#4C000000" Grid.RowSpan="7" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Visibility="Collapsed"/>
-            <AppBarButton x:Name="ResetControlsButton" HorizontalAlignment="Left" Icon="Cancel" Label="Reset" Margin="-10,-10,0,0" VerticalAlignment="Top" Width="60" Height="60" Foreground="White" Click="ResetControlsButton_Click" Style="{StaticResource AppBarButtonStyle1}" />
+            <AppBarButton x:Name="ResetControllersButton" HorizontalAlignment="Left" Icon="Cancel" Label="Reset" Margin="-10,-10,0,0" VerticalAlignment="Top" Width="60" Height="60" Foreground="White" Click="ResetControllersButton_Click" Style="{StaticResource AppBarButtonStyle1}" />
 
         </Grid>
         <Image Margin="980,520,0,0" Source="/Assets/UTFPR1.png" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>
