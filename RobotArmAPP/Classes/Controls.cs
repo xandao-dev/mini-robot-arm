@@ -83,7 +83,7 @@ namespace RobotArmAPP.Classes
 
             try
             {
-                VerifySliderBoxValue(axis);
+                VerifySliderBoxValue(axis,Eixo1SliderBox,Eixo2SliderBox,Eixo3SliderBox,Eixo4SliderBox,GarraSliderBox,Eixo1Slider,Eixo2Slider,Eixo3Slider,Eixo4Slider,GarraSlider);
             }
             catch { }
         }
@@ -275,7 +275,7 @@ namespace RobotArmAPP.Classes
 
         ConvertToString convertToString = new ConvertToString();
 
-        public void SwitchMinimizeDelay(byte type, ListView FramesListView, List<int[]> framesList)
+        public void SwitchMinimizeDelay(byte type, TextBox FrameSpeedBox, ListView FramesListView, List<int[]> framesList)
         {
             /*
              * 0: Min Delay All Items
@@ -291,13 +291,13 @@ namespace RobotArmAPP.Classes
                 case 0:
                     for (int selected = 0; selected < FramesListView.Items.Count; selected++)
                     {
-                        MinimizeDelayCalculus(selected);
+                        MinimizeDelayCalculus(selected,FrameSpeedBox,FramesListView,framesList);
                     }
                     FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
                     break;
                 case 1:
                     int index = FramesListView.SelectedIndex;
-                    MinimizeDelayCalculus(index);
+                    MinimizeDelayCalculus(index,FrameSpeedBox,FramesListView,framesList);
                     FramesListView.SelectedIndex = index;
                     break;
             }

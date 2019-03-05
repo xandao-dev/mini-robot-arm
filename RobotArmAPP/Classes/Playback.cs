@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Shapes;
 
 namespace RobotArmAPP.Classes
 {
     class Playback
     {
-        public void PlaybackFunction()
+        public void PlaybackFunction(bool playing, bool okToSend,int currentFrame, int repeatTimes, int[] currentFrameArray, List<int[]> framesList, DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Button StopPlayback)
         {
             FramesListView.SelectedIndex = currentFrame;
             currentFrameArray = framesList[currentFrame];
@@ -39,12 +43,12 @@ namespace RobotArmAPP.Classes
                 else
                 {
                     RepeatTimesBox.Text = Convert.ToString(repeatTimes);
-                    IsPlaying(false);
+                    IsPlaying(false,playing, okToSend, framesList,playbackTimer,Blocker1,Blocker2,Blocker3,StopPlayback);
                 }
             }
         }
 
-        public void IsPlaying(bool onOff)
+        public void IsPlaying(bool onOff,bool playing, bool okToSend, List<int[]> framesList, DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, Button StopPlayback)
         {
             if (framesList.Count <= 0)
             {

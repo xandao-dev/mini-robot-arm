@@ -12,7 +12,7 @@
         <Style TargetType="Button" x:Key="ButtonStyle1">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControllerTemplate TargetType="Button">
+                    <ControlTemplate TargetType="Button">
                         <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -59,15 +59,15 @@
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                    Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerBackgroundBaseLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                    Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledBaseMediumLowBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                    Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControllerDisabledTransparentBrush}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -84,7 +84,7 @@
                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                           AutomationProperties.AccessibilityView="Raw"/>
                         </Grid>
-                    </ControllerTemplate>
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -102,7 +102,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid HorizontalAlignment="Left" Height="265" Margin="10,10,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="600" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="10,10,10,10">
-            <TextBlock HorizontalAlignment="Left" Margin="34,65,0,0" Text="1) Enable WiFi Controller on robotic arm." TextWrapping="Wrap" VerticalAlignment="Top" Height="50" Width="590" FontSize="24" Foreground="White"/>
+            <TextBlock HorizontalAlignment="Left" Margin="34,65,0,0" Text="1) Enable WiFi control on robotic arm." TextWrapping="Wrap" VerticalAlignment="Top" Height="50" Width="590" FontSize="24" Foreground="White"/>
             <TextBlock HorizontalAlignment="Left" Margin="34,10,0,0" Text="WiFi Connection" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="36" Foreground="White" TextDecorations="Underline"/>
             <TextBlock HorizontalAlignment="Left" Margin="38,106,0,0" Text="2) Connect to the network." TextWrapping="Wrap" VerticalAlignment="Top" Height="50" Width="392" FontSize="24" Foreground="White"/>
             <Button x:Name="BTN_Conectar" Content="Connect" HorizontalAlignment="Left" Margin="35,175,0,0" VerticalAlignment="Top" Width="250" Height="30" Click="BTN_Conectar_Click" BorderBrush="#FFF7CC01" Foreground="White" Style="{StaticResource ButtonStyle1}"/>

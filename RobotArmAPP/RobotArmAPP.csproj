@@ -112,8 +112,8 @@
     <Compile Include="Classes\WiFiAPConnection.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="Views\Conexao.xaml.cs">
-      <DependentUpon>Conexao.xaml</DependentUpon>
+    <Compile Include="Views\Connection.xaml.cs">
+      <DependentUpon>Connection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controller.xaml.cs">
       <DependentUpon>Controller.xaml</DependentUpon>
@@ -197,7 +197,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Conexao.xaml">
+    <Page Include="Views\Connection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

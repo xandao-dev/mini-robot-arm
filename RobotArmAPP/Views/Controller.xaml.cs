@@ -21,7 +21,7 @@ namespace RobotArmAPP.Views
         private int currentFrame = 0; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
         private int[] currentFrameArray; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
         #endregion
-        
+
         #region OBJECTS
         private List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
         #endregion
@@ -71,7 +71,7 @@ namespace RobotArmAPP.Views
         #region SLIDERS & SLIDERS BOXES
         private async void Eixo1Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 1);
+            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 1, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private void Eixo1SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -81,18 +81,18 @@ namespace RobotArmAPP.Views
 
         private void Eixo1SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void Eixo1SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 1);
+            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 1, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
 
         private async void Eixo2Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 2);
+            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 2, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private void Eixo2SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -102,18 +102,18 @@ namespace RobotArmAPP.Views
 
         private void Eixo2SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void Eixo2SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 2);
+            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 2, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
 
         private async void Eixo3Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 3);
+            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 3, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private void Eixo3SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -123,18 +123,18 @@ namespace RobotArmAPP.Views
 
         private void Eixo3SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void Eixo3SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 3);
+            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 3, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
 
         private async void Eixo4Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 4);
+            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 4, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private void Eixo4SliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -144,18 +144,18 @@ namespace RobotArmAPP.Views
 
         private void Eixo4SliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void Eixo4SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 4);
+            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 4, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
 
         private async void GarraSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 5);
+            await controls.SendSlidersValues(liveBoxStatus, okToSend, playing, 5, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private void GarraSliderBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -165,12 +165,12 @@ namespace RobotArmAPP.Views
 
         private void GarraSliderBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void GarraSliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 5);
+            await controls.WhenSliderBoxLostFocus(liveBoxStatus, okToSend, 5, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
         #endregion
 
@@ -182,12 +182,12 @@ namespace RobotArmAPP.Views
 
         private void FrameSpeedBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void FrameSpeedBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.BoxesMaxNumberLimiter(1);
+            await controls.BoxesMaxNumberLimiter(1, RepeatTimesBox, FrameSpeedBox, DelayBox);
         }
 
 
@@ -198,31 +198,32 @@ namespace RobotArmAPP.Views
 
         private void DelayBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void DelayBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.BoxesMaxNumberLimiter(2);
+            await controls.BoxesMaxNumberLimiter(2, RepeatTimesBox, FrameSpeedBox, DelayBox);
         }
+
 
         private async void MinDelay_Click(object sender, RoutedEventArgs e)//CALCULADO APENAS PARA O MG995
         {
-            controls.SwitchMinimizeDelay(1);
+            controls.SwitchMinimizeDelay(1, FrameSpeedBox, FramesListView, framesList);
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
 
         private async void MinDelayAll_Click(object sender, RoutedEventArgs e)
         {
             changingControls = true;
-            controls.LockControls(true, true);
+            controls.LockControls(true, true, Blocker1, Blocker2, Blocker3);
             Canvas.SetZIndex(StopPlayback, 1);
             Canvas.SetZIndex(Blocker2, 2);
 
-            controls.SwitchMinimizeDelay(0);
+            controls.SwitchMinimizeDelay(0, FrameSpeedBox, FramesListView, framesList);
 
             changingControls = false;
-            controls.LockControls(false, false);
+            controls.LockControls(false, false, Blocker1, Blocker2, Blocker3);
 
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
@@ -235,12 +236,12 @@ namespace RobotArmAPP.Views
 
         private void RepeatTimesBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            controls.BoxFocusOut(e);
+            controls.BoxFocusOut(e, ControllerPage);
         }
 
         private async void RepeatTimesBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            await controls.BoxesMaxNumberLimiter(3);
+            await controls.BoxesMaxNumberLimiter(3, RepeatTimesBox, FrameSpeedBox, DelayBox);
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
         #endregion
@@ -254,19 +255,19 @@ namespace RobotArmAPP.Views
 
         private async void ResetControlsButton_Click(object sender, RoutedEventArgs e)
         {
-            controls.ResetControls();
+            controls.ResetControls(Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, framesList);
             await jsonSaverAndLoader.JsonAutoDeleter();
         }
 
         private async void InsertFrame_Click(object sender, RoutedEventArgs e)
         {
-            frames.InsertFrameFunction();
+            frames.InsertFrameFunction(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
 
         private async void OverwriteFrame_Click(object sender, RoutedEventArgs e)
         {
-            frames.OverwriteFrameFunction();
+            frames.OverwriteFrameFunction(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
 
@@ -277,13 +278,13 @@ namespace RobotArmAPP.Views
                 return;
             }
 
-            frames.DeleteFrameFunction();
+            frames.DeleteFrameFunction(FramesListView, framesList);
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
         }
 
         private void FramesListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            frames.SendItemsToSlidersWhenDoubleTapped();
+            frames.SendItemsToSlidersWhenDoubleTapped(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private async void FramesListView_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -295,7 +296,7 @@ namespace RobotArmAPP.Views
                     return;
                 }
 
-                frames.DeleteFrameFunction();
+                frames.DeleteFrameFunction(FramesListView, framesList);
                 await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
             }
         }
@@ -307,7 +308,7 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = 0;
-            playback.IsPlaying(true);
+            playback.IsPlaying(true, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
 
         private async void PlaySelected_Click(object sender, RoutedEventArgs e)
@@ -315,13 +316,13 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = FramesListView.SelectedIndex;
-            playback.IsPlaying(true);
+            playback.IsPlaying(true, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
 
         private async void StopPlayback_Click(object sender, RoutedEventArgs e)
         {
             await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
-            playback.IsPlaying(false);
+            playback.IsPlaying(false, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
         #endregion
 
@@ -331,7 +332,7 @@ namespace RobotArmAPP.Views
             int status = await wiFiAPConnection.WifiStatus(false, false);
             if (status == 1 && playing != true && changingControls != true)
             {
-                controls.LockControls(null, false);
+                controls.LockControls(null, false, Blocker1, Blocker2, Blocker3);
             }
             else if (status != 1)
             {
@@ -340,14 +341,14 @@ namespace RobotArmAPP.Views
             }
             else
             {
-                controls.LockControls(null, true);
+                controls.LockControls(null, true, Blocker1, Blocker2, Blocker3);
             }
             QuantidadeItens.Text = Convert.ToString(framesList.Count);
         }  /*ATIVAR*/ //Verifica o Wifi Para bloquear os Controles
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
-            playback.PlaybackFunction();
+            playback.PlaybackFunction(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
         } // Timer que envia as sequencias no Play
         #endregion
 

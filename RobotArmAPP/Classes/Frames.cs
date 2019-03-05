@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace RobotArmAPP.Classes
 {
     class Frames
     {
-        public void InsertFrameFunction()
+        ConvertToString convertToString = new ConvertToString();
+
+        public void InsertFrameFunction(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider )
         {
             try
             {
@@ -32,7 +35,7 @@ namespace RobotArmAPP.Classes
             catch { }
         }
 
-        public void OverwriteFrameFunction()
+        public void OverwriteFrameFunction(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             try
             {
@@ -45,7 +48,7 @@ namespace RobotArmAPP.Classes
             catch { }
         }
 
-        public void DeleteFrameFunction()
+        public void DeleteFrameFunction( ListView FramesListView, List<int[]> framesList)
         {
             int selected = FramesListView.SelectedIndex;
             framesList.RemoveAt(selected);
@@ -65,7 +68,7 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public void SendItemsToSlidersWhenDoubleTapped()
+        public void SendItemsToSlidersWhenDoubleTapped(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             try
             {
