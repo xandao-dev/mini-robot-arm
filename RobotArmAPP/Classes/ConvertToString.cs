@@ -5,7 +5,7 @@ namespace RobotArmAPP.Classes
 {
     class ConvertToString
     {
-        public string ConvertItemToString(int garra, int axis4, int axis3, int axis2, int axis1, int speed, int delay)
+        public string ConvertFrameToString(int garra, int axis4, int axis3, int axis2, int axis1, int speed, int delay)
         {
             try
             {
@@ -33,10 +33,10 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public string SelectedItemToString(int index, int delay)
+        public string SelectedFrameToString(int index, int delay)
         {
             int[] selectedArray = Controller.framesList[index];
-            string add = ConvertItemToString(selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delay);
+            string add = ConvertFrameToString(selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delay);
 
             return add;
         }

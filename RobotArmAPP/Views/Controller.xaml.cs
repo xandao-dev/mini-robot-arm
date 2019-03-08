@@ -14,12 +14,12 @@ namespace RobotArmAPP.Views
     {
         #region VARIABLES
         public static bool okToSend = true;
-        public static bool playing = false; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        public static bool playing = false; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         public static bool changingControls = false;
         public bool liveBoxStatus = true; //Váriavel de leitura, mudar ela não altera a liveBoxStatus
         public static int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
-        public static int currentFrame = 0;//usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
-        public static int[] currentFrameArray; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        public static int currentFrame = 0;//usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
+        public static int[] currentFrameArray; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         #endregion
 
         #region OBJECTS
@@ -248,7 +248,7 @@ namespace RobotArmAPP.Views
         #region CONTROLS
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+            await httpRequests.SendMovementToRobot(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
@@ -307,8 +307,8 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = 0;
-            playback.IsPlaying(true);
-            //playback.PlaybackFunction(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
+            playback.SetPlayingStatus(true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            //playback.FramePlayback(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
         }
 
         private async void PlaySelected_Click(object sender, RoutedEventArgs e)
@@ -316,13 +316,13 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = FramesListView.SelectedIndex;
-            playback.IsPlaying(true);
+            playback.SetPlayingStatus(true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
 
         private async void StopPlayback_Click(object sender, RoutedEventArgs e)
         {
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
-            playback.IsPlaying(false);
+            playback.SetPlayingStatus(false, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
         #endregion
 
@@ -348,7 +348,7 @@ namespace RobotArmAPP.Views
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
-            playback.PlaybackFunction();
+            playback.FramePlayback(playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
         } // Timer que envia as sequencias no Play
         #endregion
 

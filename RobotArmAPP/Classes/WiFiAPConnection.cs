@@ -31,7 +31,10 @@ namespace RobotArmAPP
                     }
                 }
             }
-            catch { }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }  //Method that needs to be called in the Page_Loaded or OnNavigatedTo function to request access to the wifi controls
 
         private async Task<string> VerifyAP(int appConnectionOK)

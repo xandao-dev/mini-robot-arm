@@ -13,7 +13,7 @@ namespace RobotArmAPP.Classes
 {
     class Playback
     {
-        public void PlaybackFunction()
+        public void FramePlayback(DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Button StopPlayback)
         {
             FramesListView.SelectedIndex = Controller.currentFrame;
             Controller.currentFrameArray = Controller.framesList[Controller.currentFrame];
@@ -44,12 +44,12 @@ namespace RobotArmAPP.Classes
                 else
                 {
                     RepeatTimesBox.Text = Convert.ToString(Controller.repeatTimes);
-                    IsPlaying(false);
+                    SetPlayingStatus(false, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
                 }
             }
         }
 
-        public void IsPlaying(bool onOff)
+        public void SetPlayingStatus(bool onOff, DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, Button StopPlayback)
         {
             if (Controller.framesList.Count <= 0)
             {

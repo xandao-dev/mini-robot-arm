@@ -18,7 +18,7 @@ namespace RobotArmAPP.Classes
             {
                 int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
                 int frameDelay = Convert.ToInt32(DelayBox.Text);
-                string add = convertToString.ConvertItemToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay);
+                string add = convertToString.ConvertFrameToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay);
 
                 if (FramesListView.SelectedItems.Count > 0)
                 {
@@ -42,14 +42,14 @@ namespace RobotArmAPP.Classes
             {
                 int selectedIndex = FramesListView.SelectedIndex;
                 Controller.framesList[selectedIndex] = new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text) };
-                FramesListView.Items.Insert(selectedIndex, convertToString.ConvertItemToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text)));
+                FramesListView.Items.Insert(selectedIndex, convertToString.ConvertFrameToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text)));
                 FramesListView.Items.RemoveAt(selectedIndex + 1);
                 FramesListView.SelectedIndex = selectedIndex;
             }
             catch { }
         }
 
-        public void DeleteFrameFunction( ListView FramesListView)
+        public void DeleteFrameFunction(ListView FramesListView)
         {
             int selected = FramesListView.SelectedIndex;
             Controller.framesList.RemoveAt(selected);
