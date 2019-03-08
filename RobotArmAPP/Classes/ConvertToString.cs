@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RobotArmAPP.Views;
+using System.Collections.Generic;
 
 namespace RobotArmAPP.Classes
 {
@@ -32,9 +33,9 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public string SelectedItemToString(List<int[]> framesList, int index, int delay)
+        public string SelectedItemToString(int index, int delay)
         {
-            int[] selectedArray = framesList[index];
+            int[] selectedArray = Controller.framesList[index];
             string add = ConvertItemToString(selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delay);
 
             return add;

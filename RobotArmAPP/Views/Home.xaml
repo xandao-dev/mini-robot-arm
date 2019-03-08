@@ -312,7 +312,7 @@
     <Grid Background="Black">
         <Image Margin="0,0,0,140" Source="/Assets/cross3.png" FocusVisualPrimaryBrush="#FFF7CC01"/>
         <TextBlock x:Name="PasswordTXT" Margin="400,390,808,0" Text="Password:" TextWrapping="Wrap" Foreground="White" VerticalAlignment="Top" Height="28" HorizontalAlignment="Stretch"/>
-        <PasswordBox x:Name="passwordBox" MaxLength="16" Height="32" Margin="400,415,422,0" VerticalAlignment="Top" Background="White" BorderBrush="#FFF8C610" HorizontalAlignment="Stretch" MinWidth="150" KeyUp="PasswordBox_KeyUp" PlaceholderText="Enter password" IsPasswordRevealButtonEnabled="True" Loaded="PasswordBox_Loaded" Visibility="Visible" Style="{StaticResource PasswordBoxStyle1}" Foreground="Black"/>
+        <PasswordBox x:Name="passwordBox" MaxLength="16" Height="32" Margin="400,415,422,0" VerticalAlignment="Top" Background="White" BorderBrush="#FFF8C610" HorizontalAlignment="Stretch" MinWidth="150" KeyUp="PasswordBox_KeyUp" PlaceholderText="Enter password" PasswordRevealMode="Peek"  Loaded="PasswordBox_Loaded" Visibility="Visible" Style="{StaticResource PasswordBoxStyle1}" Foreground="Black"/>
         <Image Margin="980,520,0,0" Source="/Assets/UTFPR1.png" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>
         <Button x:Name="LogoutBTN" Content="Logout" Height="32" Margin="400,415,422,0" VerticalAlignment="Top" Foreground="Black" BorderBrush="#FFF7CC01" Background="LightGray" FocusVisualPrimaryBrush="Black" HorizontalAlignment="Stretch" MinWidth="150" Visibility="Collapsed" Click="LogoutBTN_Click" Style="{StaticResource ButtonStyle1}" />
     </Grid>

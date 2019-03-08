@@ -325,7 +325,7 @@ namespace RobotArmAPP.Classes
                     int minimum = 900 * 100 / speed;
 
                     framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], minimum };
-                    FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(framesList, index, minimum));
+                    FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(index, minimum));
                     FramesListView.Items.RemoveAt(selected + 1);
                     FramesListView.SelectedIndex = selected;
                 }
@@ -341,7 +341,7 @@ namespace RobotArmAPP.Classes
                     int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
 
                     framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                    FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(framesList, index, delayMin));
+                    FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(index, delayMin));
                     FramesListView.Items.RemoveAt(selected + 1);
                     FramesListView.SelectedIndex = selected;
                 }
@@ -363,7 +363,7 @@ namespace RobotArmAPP.Classes
                 int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
 
                 framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(framesList, index, delayMin));
+                FramesListView.Items.Insert(selected, convertToString.SelectedItemToString(index, delayMin));
                 FramesListView.Items.RemoveAt(selected + 1);
                 FramesListView.SelectedIndex = selected;
             }

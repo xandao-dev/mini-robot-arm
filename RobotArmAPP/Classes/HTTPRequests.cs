@@ -19,7 +19,7 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public async Task<string> GetRequestPlayer(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor, string speed)
+        /*public async Task<string> GetRequestPlayer(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor, string speed)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace RobotArmAPP.Classes
             {
                 return null;
             }
-        }
+        }*/
 
         public async Task<string> ReadyToSend(int readyToSend)
         {

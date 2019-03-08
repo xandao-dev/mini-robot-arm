@@ -13,17 +13,17 @@ namespace RobotArmAPP.Views
     public sealed partial class Controller : Page
     {
         #region VARIABLES
-        private bool okToSend = true;
-        private bool playing = false; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
-        private bool changingControls = false;
-        private bool liveBoxStatus = true; //Váriavel de leitura, mudar ela não altera a liveBoxStatus
-        private int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
-        private int currentFrame = 0; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
-        private int[] currentFrameArray; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        public static bool okToSend = true;
+        public static bool playing = false; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        public static bool changingControls = false;
+        public bool liveBoxStatus = true; //Váriavel de leitura, mudar ela não altera a liveBoxStatus
+        public static int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
+        public static int currentFrame = 0;//usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
+        public static int[] currentFrameArray; //usado para funções de controle programaveis( IsPlaying(),PlayAtTop,PlayFromSelected ... )
         #endregion
 
         #region OBJECTS
-        private List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
+        public static List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
         #endregion
 
         #region INSTANCE FIELDS
@@ -33,7 +33,6 @@ namespace RobotArmAPP.Views
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
         HTTPRequests httpRequests = new HTTPRequests();
         JsonSaverAndLoader jsonSaverAndLoader = new JsonSaverAndLoader();
-        ConvertToString convertToString = new ConvertToString();
         Controls controls = new Controls();
         Frames frames = new Frames();
         Playback playback = new Playback();
@@ -42,13 +41,13 @@ namespace RobotArmAPP.Views
         #region INITIALIZATION
         public Controller()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             wiFiAPConnection.RequestWifiAcess();
-            await jsonSaverAndLoader.JsonAutoLoader(framesList, FramesListView, RepeatTimesBox);
+            await jsonSaverAndLoader.JsonAutoLoader(FramesListView, RepeatTimesBox);
             try
             {
                 await httpRequests.ReadyToSend(200);
@@ -210,7 +209,7 @@ namespace RobotArmAPP.Views
         private async void MinDelay_Click(object sender, RoutedEventArgs e)//CALCULADO APENAS PARA O MG995
         {
             controls.SwitchMinimizeDelay(1, FrameSpeedBox, FramesListView, framesList);
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
         private async void MinDelayAll_Click(object sender, RoutedEventArgs e)
@@ -225,7 +224,7 @@ namespace RobotArmAPP.Views
             changingControls = false;
             controls.LockControls(false, false, Blocker1, Blocker2, Blocker3);
 
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
 
@@ -242,7 +241,7 @@ namespace RobotArmAPP.Views
         private async void RepeatTimesBox_LostFocus(object sender, RoutedEventArgs e)
         {
             await controls.BoxesMaxNumberLimiter(3, RepeatTimesBox, FrameSpeedBox, DelayBox);
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
         #endregion
 
@@ -250,7 +249,7 @@ namespace RobotArmAPP.Views
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
             await httpRequests.GetRequest(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
         private async void ResetControlsButton_Click(object sender, RoutedEventArgs e)
@@ -261,14 +260,14 @@ namespace RobotArmAPP.Views
 
         private async void InsertFrame_Click(object sender, RoutedEventArgs e)
         {
-            frames.InsertFrameFunction(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            frames.InsertFrameFunction(FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
         private async void OverwriteFrame_Click(object sender, RoutedEventArgs e)
         {
-            frames.OverwriteFrameFunction(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            frames.OverwriteFrameFunction(FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
         private async void DeleteFrame_Click(object sender, RoutedEventArgs e)
@@ -278,13 +277,13 @@ namespace RobotArmAPP.Views
                 return;
             }
 
-            frames.DeleteFrameFunction(FramesListView, framesList);
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            frames.DeleteFrameFunction(FramesListView);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
 
         private void FramesListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            frames.SendItemsToSlidersWhenDoubleTapped(FrameSpeedBox, DelayBox, FramesListView, framesList, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            frames.SendItemsToSlidersWhenDoubleTapped(FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
         }
 
         private async void FramesListView_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -296,8 +295,8 @@ namespace RobotArmAPP.Views
                     return;
                 }
 
-                frames.DeleteFrameFunction(FramesListView, framesList);
-                await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+                frames.DeleteFrameFunction(FramesListView);
+                await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             }
         }
         #endregion
@@ -305,24 +304,25 @@ namespace RobotArmAPP.Views
         #region PLAYBACK
         private async void PlayTop_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = 0;
-            playback.IsPlaying(true, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            playback.IsPlaying(true);
+            //playback.PlaybackFunction(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
         }
 
         private async void PlaySelected_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = FramesListView.SelectedIndex;
-            playback.IsPlaying(true, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            playback.IsPlaying(true);
         }
 
         private async void StopPlayback_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.JsonAutoSaver(framesList, RepeatTimesBox.Text);
-            playback.IsPlaying(false, playing, okToSend, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
+            playback.IsPlaying(false);
         }
         #endregion
 
@@ -348,14 +348,14 @@ namespace RobotArmAPP.Views
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
-            playback.PlaybackFunction(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
+            playback.PlaybackFunction();
         } // Timer que envia as sequencias no Play
         #endregion
 
         #region JSON - SAVE/OPEN
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.SaveJsonWithFilePicker(framesList, RepeatTimesBox.Text);
+            await jsonSaverAndLoader.SaveJsonWithFilePicker(RepeatTimesBox.Text);
         }
 
         private async void Open_Click(object sender, RoutedEventArgs e)
@@ -369,7 +369,7 @@ namespace RobotArmAPP.Views
             string speedCurrent = FrameSpeedBox.Text;
             string delayCurrent = DelayBox.Text;
 
-            await jsonSaverAndLoader.OpenJsonWithFilePicker(framesList, FramesListView, RepeatTimesBox);
+            await jsonSaverAndLoader.OpenJsonWithFilePicker(FramesListView, RepeatTimesBox);
 
             GarraSlider.Value = garraCurrent;
             Eixo4Slider.Value = axis4Current;

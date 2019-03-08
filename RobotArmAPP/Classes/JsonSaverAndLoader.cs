@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RobotArmAPP.Views;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,9 +17,9 @@ namespace RobotArmAPP.Classes
         HTTPRequests httpRequests = new HTTPRequests();
         ConvertToString convertToString = new ConvertToString();
 
-        public async Task JsonAutoSaver(List<int[]> framesList, string RepeatTimes)
+        public async Task JsonAutoSaver(string RepeatTimes)
         {
-            if (framesList.Count <= 0)
+            if (Controller.framesList.Count <= 0)
             {
                 return;
             }
@@ -29,7 +30,7 @@ namespace RobotArmAPP.Classes
                 CachedFileManager.DeferUpdates(autoSaveFile); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
                 string repeatTimes = string.Format("{0:D5}", RepeatTimes);
                 await FileIO.WriteTextAsync(autoSaveFile, "{\"rpt\":" + repeatTimes + ",\"mov\":");
-                var json = JsonConvert.SerializeObject(framesList);
+                var json = JsonConvert.SerializeObject(Controller.framesList);
                 await FileIO.AppendTextAsync(autoSaveFile, json);
                 await FileIO.AppendTextAsync(autoSaveFile, "}");
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile); //permite que outros programas editem o arquivo
@@ -37,14 +38,14 @@ namespace RobotArmAPP.Classes
             catch { }
         }
 
-        public async Task JsonAutoLoader(List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
+        public async Task JsonAutoLoader(ListView FramesListView, TextBox RepeatTimesBox)
         {
             if (App.FirstStart == false)
             {
                 try
                 {
                     StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                    await ConvertingJsonToList(autoSaveFile, false, framesList, FramesListView, RepeatTimesBox);
+                    await ConvertingJsonToList(autoSaveFile, false, FramesListView, RepeatTimesBox);
                 }
                 catch
                 { //manipular
@@ -68,7 +69,7 @@ namespace RobotArmAPP.Classes
                         {
                             try
                             {
-                                await ConvertingJsonToList(autoSaveFile, false, framesList, FramesListView, RepeatTimesBox);
+                                await ConvertingJsonToList(autoSaveFile, false, FramesListView, RepeatTimesBox);
                             }
                             catch
                             {
@@ -100,7 +101,7 @@ namespace RobotArmAPP.Classes
         }
 
 
-        public async Task OpenJsonWithFilePicker(List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
+        public async Task OpenJsonWithFilePicker(ListView FramesListView, TextBox RepeatTimesBox)
         {
             var picker = new FileOpenPicker
             {
@@ -114,9 +115,9 @@ namespace RobotArmAPP.Classes
             {
                 try
                 {
-                    framesList.Clear();
+                    Controller.framesList.Clear();
                     FramesListView.Items.Clear();
-                    await ConvertingJsonToList(file, true, framesList, FramesListView, RepeatTimesBox);
+                    await ConvertingJsonToList(file, true, FramesListView, RepeatTimesBox);
                 }
                 catch
                 {
@@ -126,9 +127,9 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public async Task SaveJsonWithFilePicker(List<int[]> framesList, string RepeatTimes)
+        public async Task SaveJsonWithFilePicker(string RepeatTimes)
         {
-            if (framesList.Count <= 0)
+            if (Controller.framesList.Count <= 0)
             {
                 return;
             }
@@ -148,18 +149,18 @@ namespace RobotArmAPP.Classes
                     CachedFileManager.DeferUpdates(file); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
                     string repeatTimes = string.Format("{0:D5}", RepeatTimes);
                     await FileIO.WriteTextAsync(file, "{\"repeatTimes\":" + repeatTimes + ",\"moves\":[");
-                    for (int i = 0; i < framesList.Count; i++) //salva os frames linha por linha
+                    for (int i = 0; i < Controller.framesList.Count; i++) //salva os frames linha por linha
                     {
-                        string garra = string.Format("{0:D3}", framesList[i][0]);
-                        string axis4 = string.Format("{0:D3}", framesList[i][1]);
-                        string axis3 = string.Format("{0:D3}", framesList[i][2]);
-                        string axis2 = string.Format("{0:D3}", framesList[i][3]);
-                        string axis1 = string.Format("{0:D3}", framesList[i][4]);
-                        string speed = string.Format("{0:D3}", framesList[i][5]);
-                        string delay = string.Format("{0:D6}", framesList[i][6]);
+                        string garra = string.Format("{0:D3}", Controller.framesList[i][0]);
+                        string axis4 = string.Format("{0:D3}", Controller.framesList[i][1]);
+                        string axis3 = string.Format("{0:D3}", Controller.framesList[i][2]);
+                        string axis2 = string.Format("{0:D3}", Controller.framesList[i][3]);
+                        string axis1 = string.Format("{0:D3}", Controller.framesList[i][4]);
+                        string speed = string.Format("{0:D3}", Controller.framesList[i][5]);
+                        string delay = string.Format("{0:D6}", Controller.framesList[i][6]);
 
                         await FileIO.AppendTextAsync(file, "{\"garra\":\"" + garra + "\",\"axis4\":\"" + axis4 + "\",\"axis3\":\"" + axis3 + "\",\"axis2\":\"" + axis2 + "\",\"axis1\":\"" + axis1 + "\",\"speed\":\"" + speed + "\",\"delay\":\"" + delay + "\"}");
-                        if (i != framesList.Count - 1)
+                        if (i != Controller.framesList.Count - 1)
                         {
                             await FileIO.AppendTextAsync(file, ",");
                         }
@@ -178,7 +179,7 @@ namespace RobotArmAPP.Classes
         }
 
 
-        private async Task ConvertingJsonToList(StorageFile file, bool jsonReadable, List<int[]> framesList, ListView FramesListView, TextBox RepeatTimesBox)
+        private async Task ConvertingJsonToList(StorageFile file, bool jsonReadable, ListView FramesListView, TextBox RepeatTimesBox)
         {
             string text = await FileIO.ReadTextAsync(file);
             var moves = Moves.FromJson(text);
@@ -194,7 +195,7 @@ namespace RobotArmAPP.Classes
                     int axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
                     int speed = Convert.ToInt16(moves.Movements[i].Speed);
                     int delay = Convert.ToInt32(moves.Movements[i].Delay);
-                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                    Controller.framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
                     FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
                 }
                 RepeatTimesBox.Text = moves.RepeatTimes.ToString();
@@ -211,7 +212,7 @@ namespace RobotArmAPP.Classes
                     int axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
                     int speed = Convert.ToInt16(moves.Mov[i][5].ToString());
                     int delay = Convert.ToInt32(moves.Mov[i][6].ToString());
-                    framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
+                    Controller.framesList.Add(new int[] { garra, axis4, axis3, axis2, axis1, speed, delay });
                     FramesListView.Items.Add(convertToString.ConvertItemToString(garra, axis4, axis3, axis2, axis1, speed, delay));
                 }
                 RepeatTimesBox.Text = moves.Rpt.ToString();
