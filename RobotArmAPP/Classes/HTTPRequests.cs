@@ -9,12 +9,12 @@ namespace RobotArmAPP.Classes
         public static string portForSendFrames { get; set; } = ":18";
         public static string portForVerifyConnection { get; set; } = null;
 
-        public async Task<string> SendMovementToRobot(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor)
+        public async Task<string> SendMovementToRobot(Movement movement)
         {
             try
             {
                 HttpClient cliente = new HttpClient();
-                string resultado = await cliente.GetStringAsync(baseUrl + portForSendFrames + "/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor);
+                string resultado = await cliente.GetStringAsync(baseUrl + portForSendFrames + "/?param1=" + movement.axis1 + "&param2=" + movement.axis2 + "&param3=" + movement.axis3 + "&param4=" + movement.axis4 + "&param5=" + movement.garra);
                 return resultado;
             }
             catch
@@ -22,20 +22,6 @@ namespace RobotArmAPP.Classes
                 return null;
             }
         }
-
-        /*public async Task<string> SendMovementToRobotPlayer(string eixo1Valor, string eixo2Valor, string eixo3Valor, string eixo4Valor, string garraValor, string speed)
-        {
-            try
-            {
-                HttpClient cliente = new HttpClient();
-                string resultado = await cliente.GetStringAsync("http://10.10.10.10:18/?param1=" + eixo1Valor + "&param2=" + eixo2Valor + "&param3=" + eixo3Valor + "&param4=" + eixo4Valor + "&param5=" + garraValor + "&param6=" + speed);
-                return resultado;
-            }
-            catch
-            {
-                return null;
-            }
-        }*/
 
         public async Task<string> ReadyToSend(int readyToSend)
         {

@@ -98,12 +98,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\Controls.cs" />
-    <Compile Include="Classes\ConvertToString.cs" />
     <Compile Include="Classes\Frames.cs" />
     <Compile Include="Classes\HTTPRequests.cs" />
     <Compile Include="Classes\JsonMovesSerializeAndDeserialize.cs" />
     <Compile Include="Classes\JsonSaverAndLoader.cs" />
-    <Compile Include="Classes\Movement .cs" />
+    <Compile Include="Classes\Movement.cs" />
     <Compile Include="Classes\Playback.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

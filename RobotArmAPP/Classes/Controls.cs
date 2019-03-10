@@ -19,14 +19,14 @@ namespace RobotArmAPP.Classes
 
         HTTPRequests httpRequests = new HTTPRequests();
 
-        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider,Movement movement)
         {
             try
             {
                 if (liveBoxStatus == true && okToSend == true)
                 {
                     SwitchAxisBoxToSlider(axis,Eixo1SliderBox,Eixo2SliderBox,Eixo2SliderBox,Eixo4SliderBox,GarraSliderBox,Eixo1Slider,Eixo2Slider,Eixo3Slider,Eixo4Slider,GarraSlider);
-                    await httpRequests.SendMovementToRobot(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+                    await httpRequests.SendMovementToRobot(movement);
 
                 }
                 else
@@ -36,14 +36,14 @@ namespace RobotArmAPP.Classes
 
                 if (playing == true)
                 {
-                    await httpRequests.SendMovementToRobot(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+                    await httpRequests.SendMovementToRobot(movement);
 
                 }
             }
             catch { }
         }
 
-        private void SwitchAxisSliderToBox(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        /**/private void SwitchAxisSliderToBox(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             switch (axis)
             {
@@ -69,12 +69,12 @@ namespace RobotArmAPP.Classes
     partial class Controls
     {   //Boxes
 
-        public async Task WhenSliderBoxLostFocus(bool liveBoxStatus, bool okToSend, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        public async Task WhenSliderBoxLoseFocus(bool liveBoxStatus, bool okToSend, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Movement movement)
         {
             if (liveBoxStatus == true && okToSend == true)
             {
                 SwitchAxisSliderToBox(axis, Eixo1SliderBox, Eixo2SliderBox, Eixo2SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
-                await httpRequests.SendMovementToRobot(Convert.ToString(Eixo1Slider.Value), Convert.ToString(Eixo2Slider.Value), Convert.ToString(Eixo3Slider.Value), Convert.ToString(Eixo4Slider.Value), Convert.ToString(GarraSlider.Value));
+                await httpRequests.SendMovementToRobot(movement);
             }
             else
             {
@@ -88,7 +88,7 @@ namespace RobotArmAPP.Classes
             catch { }
         }
 
-        private void SwitchAxisBoxToSlider(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        /**/private void SwitchAxisBoxToSlider(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             switch (axis)
             {
@@ -255,16 +255,16 @@ namespace RobotArmAPP.Classes
 
         }
 
-        public void ResetControls(Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList)
+        public void ResetControls(Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList, Movement defaultMovement)
         {
-            Eixo1Slider.Value = 90;
-            Eixo2Slider.Value = 90;
-            Eixo3Slider.Value = 90;
-            Eixo4Slider.Value = 90;
-            GarraSlider.Value = 90;
-            FrameSpeedBox.Text = "100";
-            DelayBox.Text = "1000";
-            RepeatTimesBox.Text = "0";
+            Eixo1Slider.Value = defaultMovement.axis1; 
+            Eixo2Slider.Value = defaultMovement.axis2;
+            Eixo3Slider.Value = defaultMovement.axis3;
+            Eixo4Slider.Value = defaultMovement.axis4;
+            GarraSlider.Value = defaultMovement.garra;
+            FrameSpeedBox.Text = Convert.ToString(defaultMovement.speed); 
+            DelayBox.Text = Convert.ToString(defaultMovement.delay); 
+            RepeatTimesBox.Text = Convert.ToString(defaultMovement.repeatTimes);
             FramesListView.Items.Clear();
             framesList.Clear();
         }
@@ -272,10 +272,20 @@ namespace RobotArmAPP.Classes
 
     partial class Controls
     {   //Minimize Delay
+        public string SelectedFrameToString(int index, int delay, Movement movement)
+        {
+            int[] selectedArray = Controller.framesList[index];
+            movement.garra = selectedArray[0];
+            movement.axis4 = selectedArray[1];
+            movement.axis3 = selectedArray[2];
+            movement.axis2 = selectedArray[3];
+            movement.axis1 = selectedArray[4];
+            movement.speed = selectedArray[5];
+            movement.delay = delay;
+            return movement.MovesToString(Movement.StringType.allWithInfo);
+        }
 
-        ConvertToString convertToString = new ConvertToString();
-
-        public void SwitchMinimizeDelay(byte type, TextBox FrameSpeedBox, ListView FramesListView, List<int[]> framesList)
+        public void SwitchMinimizeDelay(byte type, TextBox FrameSpeedBox, ListView FramesListView, List<int[]> framesList, Movement movement)
         {
             /*
              * 0: Min Delay All Items
@@ -291,19 +301,19 @@ namespace RobotArmAPP.Classes
                 case 0:
                     for (int selected = 0; selected < FramesListView.Items.Count; selected++)
                     {
-                        MinimizeDelayCalculus(selected,FrameSpeedBox,FramesListView,framesList);
+                        MinimizeDelayCalculus(selected,FrameSpeedBox,FramesListView,framesList,movement);
                     }
                     FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
                     break;
                 case 1:
                     int index = FramesListView.SelectedIndex;
-                    MinimizeDelayCalculus(index,FrameSpeedBox,FramesListView,framesList);
+                    MinimizeDelayCalculus(index,FrameSpeedBox,FramesListView,framesList,movement);
                     FramesListView.SelectedIndex = index;
                     break;
             }
         }
 
-        private void MinimizeDelayCalculus(int selected,TextBox FrameSpeedBox ,ListView FramesListView, List<int[]> framesList)
+        private void MinimizeDelayCalculus(int selected,TextBox FrameSpeedBox ,ListView FramesListView, List<int[]> framesList, Movement movement)
         {
             if (framesList.Count <= 0)
             {
@@ -325,7 +335,7 @@ namespace RobotArmAPP.Classes
                     int minimum = 900 * 100 / speed;
 
                     framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], minimum };
-                    FramesListView.Items.Insert(selected, convertToString.SelectedFrameToString(index, minimum));
+                    FramesListView.Items.Insert(selected, SelectedFrameToString(index, minimum, movement));
                     FramesListView.Items.RemoveAt(selected + 1);
                     FramesListView.SelectedIndex = selected;
                 }
@@ -341,7 +351,7 @@ namespace RobotArmAPP.Classes
                     int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
 
                     framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                    FramesListView.Items.Insert(selected, convertToString.SelectedFrameToString(index, delayMin));
+                    FramesListView.Items.Insert(selected, SelectedFrameToString(index, delayMin, movement));
                     FramesListView.Items.RemoveAt(selected + 1);
                     FramesListView.SelectedIndex = selected;
                 }
@@ -363,7 +373,7 @@ namespace RobotArmAPP.Classes
                 int delayMin = (biggest * 5) * 100 / speed; //Valor calculado manualmente, 5ms por grau no MG995
 
                 framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
-                FramesListView.Items.Insert(selected, convertToString.SelectedFrameToString(index, delayMin));
+                FramesListView.Items.Insert(selected, SelectedFrameToString(index, delayMin,movement));
                 FramesListView.Items.RemoveAt(selected + 1);
                 FramesListView.SelectedIndex = selected;
             }

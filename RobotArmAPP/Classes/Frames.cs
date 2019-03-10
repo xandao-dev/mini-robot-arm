@@ -10,39 +10,38 @@ namespace RobotArmAPP.Classes
 {
     class Frames
     {
-        ConvertToString convertToString = new ConvertToString();
 
-        public void InsertFrameFunction(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider )
+        public void InsertFrameFunction(ListView FramesListView, Movement movement)
         {
             try
             {
-                int frameSpeed = Convert.ToInt16(FrameSpeedBox.Text);
-                int frameDelay = Convert.ToInt32(DelayBox.Text);
-                string add = convertToString.ConvertFrameToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay);
+                string MovesToString =  movement.MovesToString(Movement.StringType.allWithInfo);
+                int[] MovesInVector = movement.MovesToIntVector();
 
                 if (FramesListView.SelectedItems.Count > 0)
                 {
-                    Controller.framesList.Insert(FramesListView.SelectedIndex + 1, new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                    FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, add);
-                    FramesListView.SelectedIndex = FramesListView.SelectedIndex + 1;
+                    
+                    Controller.framesList.Insert(FramesListView.SelectedIndex + 1, MovesInVector);
+                    FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, MovesToString);
+                    FramesListView.SelectedIndex += 1;
                 }
                 else
                 {
-                    Controller.framesList.Add(new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, frameSpeed, frameDelay });
-                    FramesListView.Items.Add(add);
+                    Controller.framesList.Add(MovesInVector);
+                    FramesListView.Items.Add(MovesToString);
                     FramesListView.SelectedIndex = Controller.framesList.Count() - 1;
                 }
             }
             catch { }
         }
 
-        public void OverwriteFrameFunction(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        public void OverwriteFrameFunction(ListView FramesListView, Movement movement)
         {
             try
             {
                 int selectedIndex = FramesListView.SelectedIndex;
-                Controller.framesList[selectedIndex] = new int[] { (int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text) };
-                FramesListView.Items.Insert(selectedIndex, convertToString.ConvertFrameToString((int)GarraSlider.Value, (int)Eixo4Slider.Value, (int)Eixo3Slider.Value, (int)Eixo2Slider.Value, (int)Eixo1Slider.Value, Convert.ToInt16(FrameSpeedBox.Text), Convert.ToInt32(DelayBox.Text)));
+                Controller.framesList[selectedIndex] = movement.MovesToIntVector();
+                FramesListView.Items.Insert(selectedIndex, movement.MovesToString(Movement.StringType.allWithInfo));
                 FramesListView.Items.RemoveAt(selectedIndex + 1);
                 FramesListView.SelectedIndex = selectedIndex;
             }
@@ -69,12 +68,12 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public void SendItemsToSlidersWhenDoubleTapped(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        /**/public void SendItemsToSlidersWhenDoubleTapped(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             try
             {
-                int selected = FramesListView.SelectedIndex;
-                int[] selectedArray = Controller.framesList[selected];
+                int[] selectedArray = Controller.framesList[FramesListView.SelectedIndex];
+
                 GarraSlider.Value = selectedArray[0];
                 Eixo4Slider.Value = selectedArray[1];
                 Eixo3Slider.Value = selectedArray[2];
