@@ -16,149 +16,86 @@ namespace RobotArmAPP.Classes
 {
     partial class Controls
     {   //Sliders
-
         HTTPRequests httpRequests = new HTTPRequests();
 
-        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider,Movement movement)
+        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, Movement movement)
         {
             try
             {
-                if (liveBoxStatus == true && okToSend == true)
-                {
-                    SwitchAxisBoxToSlider(axis,Eixo1SliderBox,Eixo2SliderBox,Eixo2SliderBox,Eixo4SliderBox,GarraSliderBox,Eixo1Slider,Eixo2Slider,Eixo3Slider,Eixo4Slider,GarraSlider);
-                    await httpRequests.SendMovementToRobot(movement);
-
-                }
-                else
-                {
-                    SwitchAxisBoxToSlider(axis, Eixo1SliderBox, Eixo2SliderBox, Eixo2SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
-                }
-
-                if (playing == true)
+                if (liveBoxStatus == true && okToSend == true || playing == true)
                 {
                     await httpRequests.SendMovementToRobot(movement);
-
                 }
             }
             catch { }
-        }
-
-        /**/private void SwitchAxisSliderToBox(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
-        {
-            switch (axis)
-            {
-                case 1:
-                    Eixo1Slider.Value = Convert.ToDouble(Eixo1SliderBox.Text);
-                    break;
-                case 2:
-                    Eixo2Slider.Value = Convert.ToDouble(Eixo2SliderBox.Text);
-                    break;
-                case 3:
-                    Eixo3Slider.Value = Convert.ToDouble(Eixo3SliderBox.Text);
-                    break;
-                case 4:
-                    Eixo4Slider.Value = Convert.ToDouble(Eixo4SliderBox.Text);
-                    break;
-                case 5:
-                    GarraSlider.Value = Convert.ToDouble(GarraSliderBox.Text);
-                    break;
-            }
         }
     }
 
     partial class Controls
     {   //Boxes
+        public enum Control
+        {
+            FrameSpeedBox,
+            DelayBox,
+            RepeatTimesBox
+        }
 
-        public async Task WhenSliderBoxLoseFocus(bool liveBoxStatus, bool okToSend, int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Movement movement)
+        public async Task WhenSliderBoxLoseFocus(bool liveBoxStatus, bool okToSend, Movement movement)
         {
             if (liveBoxStatus == true && okToSend == true)
             {
-                SwitchAxisSliderToBox(axis, Eixo1SliderBox, Eixo2SliderBox, Eixo2SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
                 await httpRequests.SendMovementToRobot(movement);
             }
-            else
-            {
-                SwitchAxisSliderToBox(axis, Eixo1SliderBox, Eixo2SliderBox, Eixo2SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
-            }
+        }
 
+        public void VerifySliderBoxValue(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        {
             try
             {
-                VerifySliderBoxValue(axis,Eixo1SliderBox,Eixo2SliderBox,Eixo3SliderBox,Eixo4SliderBox,GarraSliderBox,Eixo1Slider,Eixo2Slider,Eixo3Slider,Eixo4Slider,GarraSlider);
+                switch (axis)
+                {
+                    case 1:
+                        Eixo1SliderBox.UpdateLayout();
+                        if (Convert.ToDouble(Eixo1SliderBox.Text) >= 180.0)
+                            Eixo1SliderBox.Text = "180";
+                        else if (Convert.ToDouble(Eixo1SliderBox.Text) <= 0.0)
+                            Eixo1SliderBox.Text = "0";
+                        break;
+                    case 2:
+                        Eixo2SliderBox.UpdateLayout();
+                        if (Convert.ToDouble(Eixo2SliderBox.Text) >= 180.0)
+                            Eixo2SliderBox.Text = "180";
+                        else if (Convert.ToDouble(Eixo2SliderBox.Text) <= 0.0)
+                            Eixo2SliderBox.Text = "0";
+                        break;
+                    case 3:
+                        Eixo3SliderBox.UpdateLayout();
+                        if (Convert.ToDouble(Eixo3SliderBox.Text) >= 180.0)
+                            Eixo3SliderBox.Text = "180";
+                        else if (Convert.ToDouble(Eixo3SliderBox.Text) <= 0.0)
+                            Eixo3SliderBox.Text = "0";
+                        break;
+                    case 4:
+                        Eixo4SliderBox.UpdateLayout();
+                        if (Convert.ToDouble(Eixo4SliderBox.Text) >= 180.0)
+                            Eixo4SliderBox.Text = "180";
+                        else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
+                            Eixo4SliderBox.Text = "0";
+                        break;
+                    case 5:
+                        GarraSliderBox.UpdateLayout();
+                        if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
+                            GarraSliderBox.Text = "180";
+                        else if (Convert.ToDouble(GarraSliderBox.Text) <= 0.0)
+                            GarraSliderBox.Text = "0";
+                        break;
+                }
             }
             catch { }
         }
 
-        /**/private void SwitchAxisBoxToSlider(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        public async Task BoxesMaxNumberLimiter(Control control,TextBox RepeatTimesBox,TextBox FrameSpeedBox,TextBox DelayBox)
         {
-            switch (axis)
-            {
-                case 1:
-                    Eixo1SliderBox.Text = Eixo1Slider.Value.ToString();
-                    break;
-                case 2:
-                    Eixo2SliderBox.Text = Eixo2Slider.Value.ToString();
-                    break;
-                case 3:
-                    Eixo3SliderBox.Text = Eixo3Slider.Value.ToString();
-                    break;
-                case 4:
-                    Eixo4SliderBox.Text = Eixo4Slider.Value.ToString();
-                    break;
-                case 5:
-                    GarraSliderBox.Text = GarraSlider.Value.ToString();
-                    break;
-            }
-        }
-
-        private void VerifySliderBoxValue(int axis, TextBox Eixo1SliderBox, TextBox Eixo2SliderBox, TextBox Eixo3SliderBox, TextBox Eixo4SliderBox, TextBox GarraSliderBox, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
-        {
-            switch (axis)
-            {
-                case 1:
-                    Eixo1SliderBox.UpdateLayout();
-                    if (Convert.ToDouble(Eixo1SliderBox.Text) >= 180.0)
-                        Eixo1SliderBox.Text = "180";
-                    else if (Convert.ToDouble(Eixo1SliderBox.Text) <= 0.0)
-                        Eixo1SliderBox.Text = "0";
-                    break;
-                case 2:
-                    Eixo2SliderBox.UpdateLayout();
-                    if (Convert.ToDouble(Eixo2SliderBox.Text) >= 180.0)
-                        Eixo2SliderBox.Text = "180";
-                    else if (Convert.ToDouble(Eixo2SliderBox.Text) <= 0.0)
-                        Eixo2SliderBox.Text = "0";
-                    break;
-                case 3:
-                    Eixo3SliderBox.UpdateLayout();
-                    if (Convert.ToDouble(Eixo3SliderBox.Text) >= 180.0)
-                        Eixo3SliderBox.Text = "180";
-                    else if (Convert.ToDouble(Eixo3SliderBox.Text) <= 0.0)
-                        Eixo3SliderBox.Text = "0";
-                    break;
-                case 4:
-                    Eixo4SliderBox.UpdateLayout();
-                    if (Convert.ToDouble(Eixo4SliderBox.Text) >= 180.0)
-                        Eixo4SliderBox.Text = "180";
-                    else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
-                        Eixo4SliderBox.Text = "0";
-                    break;
-                case 5:
-                    GarraSliderBox.UpdateLayout();
-                    if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
-                        GarraSliderBox.Text = "180";
-                    else if (Convert.ToDouble(GarraSliderBox.Text) <= 0.0)
-                        GarraSliderBox.Text = "0";
-                    break;
-            }
-        }
-
-        public async Task BoxesMaxNumberLimiter(int control,TextBox RepeatTimesBox,TextBox FrameSpeedBox,TextBox DelayBox)
-        {
-            /*
-             *   1:FrameSpeedBox
-             *   2:DelayBox
-             *   3:RepeatTimesBox
-             */
             try
             {
                 double dRepeats = Convert.ToDouble(RepeatTimesBox.Text);
@@ -170,7 +107,7 @@ namespace RobotArmAPP.Classes
 
                 switch (control)
                 {
-                    case 1:
+                    case Control.FrameSpeedBox:
                         /*Speed Box*/
                         FrameSpeedBox.UpdateLayout();
                         if (dSpeed > 100.0)
@@ -181,7 +118,7 @@ namespace RobotArmAPP.Classes
                         if (dDelay < minimum)
                             DelayBox.Text = Convert.ToString(minimum);
                         break;
-                    case 2:
+                    case Control.DelayBox:
                         /*Delay Box*/
                         DelayBox.UpdateLayout();
                         if (dDelay > 300000.0)
@@ -195,7 +132,7 @@ namespace RobotArmAPP.Classes
                             await dialog.ShowAsync();
                         }
                         break;
-                    case 3:
+                    case Control.RepeatTimesBox:
                         /*Repeat Times Box*/
                         RepeatTimesBox.UpdateLayout();
                         if (dRepeats > 10000.0)
@@ -286,6 +223,12 @@ namespace RobotArmAPP.Classes
 
     partial class Controls
     {   //Minimize Delay
+        public enum Delay
+        {
+            all,
+            one
+        }
+
         public string SelectedFrameToString(int index, int delay, Movement movement)
         {
             int[] selectedArray = Controller.framesList[index];
@@ -299,27 +242,23 @@ namespace RobotArmAPP.Classes
             return movement.MovesToString(Movement.StringType.allWithInfo);
         }
 
-        public void SwitchMinimizeDelay(byte type, TextBox FrameSpeedBox, ListView FramesListView, List<int[]> framesList, Movement movement)
+        public void SwitchMinimizeDelay(Delay delay, TextBox FrameSpeedBox, ListView FramesListView, List<int[]> framesList, Movement movement)
         {
-            /*
-             * 0: Min Delay All Items
-             * 1: Min Delay One Item
-             */
             if (framesList.Count <= 0)
             {
                 return;
             }
 
-            switch (type)
+            switch (delay)
             {
-                case 0:
+                case Delay.all:
                     for (int selected = 0; selected < FramesListView.Items.Count; selected++)
                     {
                         MinimizeDelayCalculus(selected,FrameSpeedBox,FramesListView,framesList,movement);
                     }
                     FramesListView.SelectedIndex = FramesListView.Items.Count - 1;
                     break;
-                case 1:
+                case Delay.one:
                     int index = FramesListView.SelectedIndex;
                     MinimizeDelayCalculus(index,FrameSpeedBox,FramesListView,framesList,movement);
                     FramesListView.SelectedIndex = index;

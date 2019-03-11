@@ -53,7 +53,7 @@ namespace RobotArmAPP
             return statusCode;
         } //Checks if ESP32 and computer are exchanging data
 
-        public async Task<bool> GetNetworkProfiles(bool verifySSID, bool needDialog)
+       /**/ public async Task<bool> GetNetworkProfiles(bool verifySSID, bool needDialog)
         {
             try
             {

@@ -16,7 +16,7 @@ namespace RobotArmAPP.Classes
     {
         Controls controls = new Controls();
 
-        /**/public void FramePlayback(DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Button StopPlayback)
+        public void FramePlayback(DispatcherTimer playbackTimer, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, Button StopPlayback)
         {
             FramesListView.SelectedIndex = Controller.currentFrame; //AQUI DEU UM ERRO
             Controller.currentFrameArray = Controller.framesList[Controller.currentFrame];
