@@ -1,4 +1,5 @@
-﻿using RobotArmAPP.Models;
+﻿using RobotArmAPP.Classes;
+using RobotArmAPP.Models;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -15,15 +16,17 @@ namespace RobotArmAPP
     public sealed partial class MainPage : Page
     {
         private DispatcherTimer WifiCheckerTimer;
-        public static ListView MenuBlocker { get; set; }
+        public static ListView LeftMenuAccess { get; set; }
 
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
+        WiFiAPConnection.Status status = new WiFiAPConnection.Status();
+        UpdateTexts updateTexts = new UpdateTexts();
 
         public MainPage()
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
-            MenuBlocker = LeftMenu;
+            LeftMenuAccess = LeftMenu;
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e) //Define o tamanho minimo do aplicativo -> Page_SizeChanged está definido no xaml
@@ -39,7 +42,7 @@ namespace RobotArmAPP
         {
             MenuGrid_Tapped(null, null);
 
-            wiFiAPConnection.RequestWifiAcess();
+            wiFiAPConnection.RequestWifiAccess();
 
             WifiCheckerTimer = new DispatcherTimer();
             WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;
@@ -59,29 +62,10 @@ namespace RobotArmAPP
             }
         }
 
-        private void TextAndColor(int status)
-        {
-            if (status == 0)
-            {
-                TXT_StatusGlobal.Text = "Disconnected";
-                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
-            }
-            else if (status == 1)
-            {
-                TXT_StatusGlobal.Text = "Connected";
-                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
-            }
-            else if (status == 2)
-            {
-                TXT_StatusGlobal.Text = "Connecting";
-                TXT_StatusGlobal.Foreground = new SolidColorBrush(Windows.UI.Colors.DarkOrange);
-            }
-        }
-
         private async void WifiCheckerTimer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
-            int status = await wiFiAPConnection.WifiStatus(false, false);
-            TextAndColor(status);
+            status = await wiFiAPConnection.WifiStatus(false, false);
+            updateTexts.StatusTextAndColor(status,TXT_StatusGlobal);
         }
     }
 }

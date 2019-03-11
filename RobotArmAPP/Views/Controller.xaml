@@ -1098,9 +1098,9 @@
                 <TextBlock Margin="7,0,0,0" Text="Arm Control" TextWrapping="Wrap" VerticalAlignment="Stretch" FontFamily="Arial Black"/>
             </Border>
             <CheckBox x:Name="LiveBox" Content="Live" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.RowSpan="2" IsChecked="{x:Bind liveBoxStatus, Mode=TwoWay}" Foreground="White"  Style="{StaticResource CheckBoxStyle1}" />
-            <AppBarButton x:Name="SendButton" HorizontalAlignment="Left" Icon="Play" Label="Send" Margin="31,60,0,0" Grid.Row="5" VerticalAlignment="Top" Height="76" Width="46" Click="SendButton_Click" Foreground="White" Style="{StaticResource AppBarButtonStyle1}" Grid.RowSpan="2" RenderTransformOrigin="0.707,0.52" Grid.Column="1"/>
-            <Rectangle x:Name="Blocker1" Margin="-43,-38,-55,-80" Fill="#4C000000" Grid.RowSpan="7" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+            <AppBarButton x:Name="SendButton" Icon="Play" Label="Send" Margin="156,64,0,0" Grid.Row="5" Height="76" Width="46" Click="SendButton_Click" Foreground="White" Style="{StaticResource AppBarButtonStyle1}" RenderTransformOrigin="0.707,0.52" Grid.RowSpan="2"/>
             <AppBarButton x:Name="ResetControlsButton" HorizontalAlignment="Left" Icon="Cancel" Label="Reset" Margin="-10,-10,0,0" VerticalAlignment="Top" Width="60" Height="60" Foreground="White" Click="ResetControlsButton_Click" Style="{StaticResource AppBarButtonStyle1}" />
+            <Rectangle x:Name="Blocker1" Margin="-43,-38,-55,-80" Fill="#4C000000" Grid.RowSpan="7" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Visibility="Collapsed"/>
 
         </Grid>
         <Image Margin="980,520,0,0" Source="/Assets/UTFPR1.png" Height="120" VerticalAlignment="Top" HorizontalAlignment="Left" Width="300"/>

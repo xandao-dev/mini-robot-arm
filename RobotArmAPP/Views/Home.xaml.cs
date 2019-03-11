@@ -26,12 +26,12 @@ namespace RobotArmAPP.Views
             if (access == false)
             {
                 PasswordTXT.Visibility = Visibility.Visible;
-                MainPage.MenuBlocker.IsEnabled = false;
+                MainPage.LeftMenuAccess.IsEnabled = false;
             }
             else
             {
                 PasswordTXT.Visibility = Visibility.Collapsed;
-                MainPage.MenuBlocker.IsEnabled = true;
+                MainPage.LeftMenuAccess.IsEnabled = true;
                 LogoutBTN.Visibility = Visibility.Visible;
                 passwordBox.Visibility = Visibility.Collapsed;
             }
@@ -48,11 +48,15 @@ namespace RobotArmAPP.Views
             {
                 if (passwordBox.Password == HomePassword)
                 {
-                    MainPage.MenuBlocker.IsEnabled = true;
+                    MainPage.LeftMenuAccess.IsEnabled = true;
                     access = true;
                     LogoutBTN.Visibility = Visibility.Visible;
                     passwordBox.Visibility = Visibility.Collapsed;
                     PasswordTXT.Visibility = Visibility.Collapsed;
+                    passwordBox.Password = "";
+                }
+                else
+                {
                     passwordBox.Password = "";
                 }
             }
@@ -60,7 +64,7 @@ namespace RobotArmAPP.Views
 
         private void LogoutBTN_Click(object sender, RoutedEventArgs e)
         {
-            MainPage.MenuBlocker.IsEnabled = false;
+            MainPage.LeftMenuAccess.IsEnabled = false;
             access = false;
             LogoutBTN.Visibility = Visibility.Collapsed;
             passwordBox.Visibility = Visibility.Visible;

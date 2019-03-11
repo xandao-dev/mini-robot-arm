@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotArmAPP.Classes;
+using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,6 +13,8 @@ namespace RobotArmAPP.Views
     {
         private DispatcherTimer WifiCheckerTimer;
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
+        WiFiAPConnection.Status status = new WiFiAPConnection.Status();
+        UpdateTexts updateTexts = new UpdateTexts();
 
         public Connection()
         {
@@ -20,7 +23,7 @@ namespace RobotArmAPP.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            wiFiAPConnection.RequestWifiAcess();
+            wiFiAPConnection.RequestWifiAccess();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -41,22 +44,22 @@ namespace RobotArmAPP.Views
 
             if (await wiFiAPConnection.GetNetworkProfiles(true, true) == false)
             {
-                int status = await wiFiAPConnection.WifiStatus(false, true);
-                TextAndColor(status);
+                status = await wiFiAPConnection.WifiStatus(false, true);
+                updateTexts.StatusTextAndColor(status,TXT_Status);
                 await wiFiAPConnection.ConnectToWifi();
             }
 
             try
             {
-                int status = await wiFiAPConnection.WifiStatus(false, false);
+                status = await wiFiAPConnection.WifiStatus(false, false);
                 bool connected = await wiFiAPConnection.GetNetworkProfiles(true, false);
                 await wiFiAPConnection.WifiStatus(connected, true);
-                TextAndColor(status);
+                updateTexts.StatusTextAndColor(status, TXT_Status);
             }
             catch
             {
-                int status = await wiFiAPConnection.WifiStatus(true, false);
-                TextAndColor(status);
+                status = await wiFiAPConnection.WifiStatus(true, false);
+                updateTexts.StatusTextAndColor(status, TXT_Status);
             }
 
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
@@ -76,13 +79,13 @@ namespace RobotArmAPP.Views
                 if (networkNotNull == true)
                 {
                     wiFiAPConnection.DisconnectWifi();
-                    int status = await wiFiAPConnection.WifiStatus(true, false);
-                    TextAndColor(status);
+                    status = await wiFiAPConnection.WifiStatus(true, false);
+                    updateTexts.StatusTextAndColor(status, TXT_Status);
                 }
                 else
                 {
-                    int status = await wiFiAPConnection.WifiStatus(false, false);
-                    TextAndColor(status);
+                    status = await wiFiAPConnection.WifiStatus(false, false);
+                    updateTexts.StatusTextAndColor(status, TXT_Status);
                 }
             }
             catch { }
@@ -91,29 +94,10 @@ namespace RobotArmAPP.Views
             BTN_Desconectar.IsEnabled = true;
         } //chama MudarTexto
 
-        private void TextAndColor(int status)
-        {
-            if (status == 0)
-            {
-                TXT_Status.Text = "Disconnected";
-                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
-            }
-            else if (status == 1)
-            {
-                TXT_Status.Text = "Connected";
-                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.Green);
-            }
-            else if (status == 2)
-            {
-                TXT_Status.Text = "Connecting";
-                TXT_Status.Foreground = new SolidColorBrush(Windows.UI.Colors.DarkOrange);
-            }
-        }
-
         private async void WifiCheckerTimer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
-            int status = await wiFiAPConnection.WifiStatus(false, false);
-            TextAndColor(status);
+            status = await wiFiAPConnection.WifiStatus(false, false);
+            updateTexts.StatusTextAndColor(status, TXT_Status);
         }
     }
 }

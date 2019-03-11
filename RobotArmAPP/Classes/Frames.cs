@@ -50,6 +50,11 @@ namespace RobotArmAPP.Classes
 
         public void DeleteFrameFunction(ListView FramesListView)
         {
+            if (FramesListView.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+
             int selected = FramesListView.SelectedIndex;
             Controller.framesList.RemoveAt(selected);
             FramesListView.Items.RemoveAt(selected);

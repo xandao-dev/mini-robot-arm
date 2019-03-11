@@ -255,6 +255,20 @@ namespace RobotArmAPP.Classes
 
         }
 
+        public void SetStopButtonZIndex(bool isButtonAhead, Rectangle Blocker2, Button StopPlayback)
+        {
+            if(isButtonAhead == true)
+            {
+                Canvas.SetZIndex(StopPlayback, 2);
+                Canvas.SetZIndex(Blocker2, 1);
+            }
+            else
+            {
+                Canvas.SetZIndex(StopPlayback, 1);
+                Canvas.SetZIndex(Blocker2, 2);
+            }
+        }
+
         public void ResetControls(Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider, TextBox RepeatTimesBox, TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, List<int[]> framesList, Movement defaultMovement)
         {
             Eixo1Slider.Value = defaultMovement.axis1; 

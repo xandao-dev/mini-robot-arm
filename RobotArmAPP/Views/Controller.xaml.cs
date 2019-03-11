@@ -31,6 +31,7 @@ namespace RobotArmAPP.Views
         private DispatcherTimer playbackTimer;
 
         WiFiAPConnection wiFiAPConnection = new WiFiAPConnection();
+        WiFiAPConnection.Status status = new WiFiAPConnection.Status();
         HTTPRequests httpRequests = new HTTPRequests();
         JsonSaverAndLoader jsonSaverAndLoader = new JsonSaverAndLoader();
         Controls controls = new Controls();
@@ -48,7 +49,7 @@ namespace RobotArmAPP.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            wiFiAPConnection.RequestWifiAcess();
+            wiFiAPConnection.RequestWifiAccess();
             await jsonSaverAndLoader.JsonAutoLoader(FramesListView, RepeatTimesBox, movement, defaultMovement);
             AssignMovementValues();
             try
@@ -56,6 +57,7 @@ namespace RobotArmAPP.Views
                 await httpRequests.ReadyToSend(200);
             }
             catch { }
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -200,7 +202,7 @@ namespace RobotArmAPP.Views
         private async void FrameSpeedBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            await controls.BoxesMaxNumberLimiter(1, RepeatTimesBox, FrameSpeedBox, DelayBox);
+            /**/await controls.BoxesMaxNumberLimiter(1, RepeatTimesBox, FrameSpeedBox, DelayBox);
         }
 
 
@@ -231,8 +233,7 @@ namespace RobotArmAPP.Views
         {
             changingControls = true;
             controls.LockControls(true, true, Blocker1, Blocker2, Blocker3);
-            Canvas.SetZIndex(StopPlayback, 1);
-            Canvas.SetZIndex(Blocker2, 2);
+            controls.SetStopButtonZIndex(false, Blocker2, StopPlayback);
 
             controls.SwitchMinimizeDelay(0, FrameSpeedBox, FramesListView, framesList, movement);
 
@@ -288,11 +289,6 @@ namespace RobotArmAPP.Views
 
         private async void DeleteFrame_Click(object sender, RoutedEventArgs e)
         {
-            if (FramesListView.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
             frames.DeleteFrameFunction(FramesListView);
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
@@ -306,11 +302,6 @@ namespace RobotArmAPP.Views
         {
             if (e.Key == VirtualKey.Delete)
             {
-                if (FramesListView.SelectedItems.Count == 0)
-                {
-                    return;
-                }
-
                 frames.DeleteFrameFunction(FramesListView);
                 await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             }
@@ -324,7 +315,6 @@ namespace RobotArmAPP.Views
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = 0;
             playback.SetPlayingStatus(true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
-            //playback.FramePlayback(playing, okToSend, currentFrame, repeatTimes, currentFrameArray, framesList, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
         }
 
         private async void PlaySelected_Click(object sender, RoutedEventArgs e)
@@ -341,26 +331,26 @@ namespace RobotArmAPP.Views
             playback.SetPlayingStatus(false, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
         #endregion
-
+        
         #region TIMERS
         private async void WifiCheckerTimer_Tick(object sender, object e)
         {
-            int status = await wiFiAPConnection.WifiStatus(false, false);
-            if (status == 1 && playing != true && changingControls != true)
+            status = await wiFiAPConnection.WifiStatus(false, false);
+            if (status == WiFiAPConnection.Status.Connected && playing != true && changingControls != true)
             {
                 controls.LockControls(null, false, Blocker1, Blocker2, Blocker3);
-            }
-            else if (status != 1)
-            {
-                Canvas.SetZIndex(StopPlayback, 1);
-                Canvas.SetZIndex(Blocker2, 2);
             }
             else
             {
                 controls.LockControls(null, true, Blocker1, Blocker2, Blocker3);
             }
+
+            if (status != WiFiAPConnection.Status.Connected)
+            {
+                controls.SetStopButtonZIndex(false, Blocker2, StopPlayback);
+            }
             QuantidadeItens.Text = Convert.ToString(framesList.Count);
-        }  /*ATIVAR*/ //Verifica o Wifi Para bloquear os Controles
+        } //Verifica o Wifi Para bloquear os Controles
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
@@ -377,24 +367,7 @@ namespace RobotArmAPP.Views
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
             okToSend = false;
-            double garraCurrent = GarraSlider.Value;
-            double axis4Current = Eixo4Slider.Value;
-            double axis3Current = Eixo3Slider.Value;
-            double axis2Current = Eixo2Slider.Value;
-            double axis1Current = Eixo1Slider.Value;
-            string speedCurrent = FrameSpeedBox.Text;
-            string delayCurrent = DelayBox.Text;
-
             await jsonSaverAndLoader.OpenJsonWithFilePicker(FramesListView, RepeatTimesBox,movement);
-            AssignMovementValues();
-
-            GarraSlider.Value = garraCurrent;
-            Eixo4Slider.Value = axis4Current;
-            Eixo3Slider.Value = axis3Current;
-            Eixo2Slider.Value = axis2Current;
-            Eixo1Slider.Value = axis1Current;
-            FrameSpeedBox.Text = speedCurrent;
-            DelayBox.Text = delayCurrent;
             okToSend = true;
         }
         #endregion
