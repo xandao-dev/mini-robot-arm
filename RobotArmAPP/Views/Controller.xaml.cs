@@ -12,7 +12,7 @@ namespace RobotArmAPP.Views
 {
     public sealed partial class Controller : Page
     {
-        #region VARIABLES
+        #region VARIABLES and OBJECTS
         public static bool okToSend = true;
         public static bool playing = false; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         public static bool changingControls = false;
@@ -20,9 +20,7 @@ namespace RobotArmAPP.Views
         public static int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
         public static int currentFrame = 0;//usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         public static int[] currentFrameArray; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
-        #endregion
 
-        #region OBJECTS
         public static List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
         #endregion
 
@@ -378,7 +376,7 @@ namespace RobotArmAPP.Views
         }
         #endregion
 
-        #region FUNCTIONS
+        #region OTHER FUNCTIONS
         public void AssignMovementValues()
         {
             try

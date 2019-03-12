@@ -24,7 +24,7 @@ namespace RobotArmAPP.Classes
             {
                 if (liveBoxStatus == true && okToSend == true || playing == true)
                 {
-                    await httpRequests.SendMovementToRobot(movement);
+                     await httpRequests.SendMovementToRobot(movement);
                 }
             }
             catch { }
