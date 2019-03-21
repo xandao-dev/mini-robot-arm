@@ -2,6 +2,7 @@
 using RobotArmAPP.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -34,7 +35,10 @@ namespace RobotArmAPP.Classes
                 await FileIO.AppendTextAsync(autoSaveFile, "}");
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile); //permite que outros programas editem o arquivo
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Debug.WriteLine("JsonAutoSaver() Exception: "+ex.Message);
+            }
         }
 
         public async Task JsonAutoLoader(ListView FramesListView, TextBox RepeatTimesBox, Movement movement, Movement defaultMovement)
@@ -44,7 +48,7 @@ namespace RobotArmAPP.Classes
                 try
                 {
                     StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
-                    await ConvertingJsonToList(autoSaveFile, true, FramesListView, RepeatTimesBox, movement);
+                    await ConvertingJsonToList(file: autoSaveFile, isAutoSavedJson: true, FramesListView, RepeatTimesBox, movement);
                 }
                 catch
                 { 
@@ -66,7 +70,7 @@ namespace RobotArmAPP.Classes
                         var resposta = await dialog.ShowAsync();
                         if ((int)resposta.Id == 0)
                         {
-                            await ConvertingJsonToList(autoSaveFile, true, FramesListView, RepeatTimesBox, movement);
+                            await ConvertingJsonToList(file: autoSaveFile, isAutoSavedJson: true, FramesListView, RepeatTimesBox, movement);
 
                         }
                         else
@@ -75,7 +79,10 @@ namespace RobotArmAPP.Classes
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("JsonAutoLoader() Exception: " + ex.Message);
+                }
                 Thread.Sleep(250);
                 await httpRequests.SendMovementToRobot(defaultMovement);
             }
@@ -91,7 +98,10 @@ namespace RobotArmAPP.Classes
                     await autoSaveFile.DeleteAsync();
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("JsonAutoDeleter() Exception: " + ex.Message);
+            }
         }
 
 
@@ -111,12 +121,12 @@ namespace RobotArmAPP.Classes
                 {
                     Controller.framesList.Clear();
                     FramesListView.Items.Clear();
-                    await ConvertingJsonToList(file, false, FramesListView, RepeatTimesBox, movement);
+                    await ConvertingJsonToList(file, isAutoSavedJson: false, FramesListView, RepeatTimesBox, movement);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    var dialog = new MessageDialog("File Invalid or Corrupted!", "Error");
-                    await dialog.ShowAsync();
+                    Debug.WriteLine("JsonAutoSaver() Exception: " + ex.Message);
+                    throw;
                 }
             }
         }
@@ -166,8 +176,8 @@ namespace RobotArmAPP.Classes
                 }
                 catch (Exception ex)
                 {
-                    var dialog = new MessageDialog("Error saving the file.\n" + ex.Message);
-                    await dialog.ShowAsync();
+                    Debug.WriteLine("SaveJsonWithFilePicker() Exception: " + ex.Message);
+                    throw;
                 }
             }
         }

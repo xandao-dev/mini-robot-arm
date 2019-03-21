@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using System;
-
+using System.Diagnostics;
 
 namespace RobotArmAPP.Classes
 {
@@ -10,9 +10,9 @@ namespace RobotArmAPP.Classes
     {
         HttpClient cliente = new HttpClient();
 
-        public static string baseUrl { get; set; } = "http://10.10.10.10";
-        public static string portForSendFrames { get; set; } = ":18";
-        public static string portForVerifyConnection { get; set; } = null;
+        public string baseUrl { get; set; } = "http://10.10.10.10";
+        public string portForSendFrames { get; set; } = ":18";
+        public string portForVerifyConnection { get; set; } = null;
 
         public async Task SendMovementToRobot(Movement movement)
         {
@@ -20,7 +20,10 @@ namespace RobotArmAPP.Classes
             {
                 await cliente.GetStringAsync(baseUrl + portForSendFrames + "/?param1=" + movement.axis1 + "&param2=" + movement.axis2 + "&param3=" + movement.axis3 + "&param4=" + movement.axis4 + "&param5=" + movement.garra);
             }
-            catch { }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("SendMovementToRobot() Exception: " + ex.Message);
+            }
         }
 
         public async Task<string> ReadyToSend(int readyToSend)
@@ -32,8 +35,9 @@ namespace RobotArmAPP.Classes
                 string resultado = await cliente.GetStringAsync(baseUrl + portForVerifyConnection + "/readytosend/?param=" + readyToSend);
                 return resultado;
             }
-            catch
+            catch (HttpRequestException ex)
             {
+                Debug.WriteLine("SendMovementToRobot() Exception: " + ex.Message);
                 return null;
             }
         }

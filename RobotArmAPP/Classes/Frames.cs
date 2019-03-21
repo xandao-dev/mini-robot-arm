@@ -1,6 +1,7 @@
 ﻿using RobotArmAPP.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,6 @@ namespace RobotArmAPP.Classes
 
                 if (FramesListView.SelectedItems.Count > 0)
                 {
-                    
                     Controller.framesList.Insert(FramesListView.SelectedIndex + 1, MovesInVector);
                     FramesListView.Items.Insert(FramesListView.SelectedIndex + 1, MovesToString);
                     FramesListView.SelectedIndex += 1;
@@ -32,7 +32,10 @@ namespace RobotArmAPP.Classes
                     FramesListView.SelectedIndex = Controller.framesList.Count() - 1;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("InsertFrameFunction() Exception: " + ex.Message);
+            }
         }
 
         public void OverwriteFrameFunction(ListView FramesListView, Movement movement)
@@ -45,7 +48,10 @@ namespace RobotArmAPP.Classes
                 FramesListView.Items.RemoveAt(selectedIndex + 1);
                 FramesListView.SelectedIndex = selectedIndex;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("OverwriteFrameFunction() Exception: " + ex.Message);
+            }
         }
 
         public void DeleteFrameFunction(ListView FramesListView)
@@ -69,11 +75,14 @@ namespace RobotArmAPP.Classes
                 {
                     FramesListView.SelectedIndex = selected - 1;
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine("DeleteFrameFunction() Exception: " + ex.Message);
+                }
             }
         }
 
-        /**/public void SendItemsToSlidersWhenDoubleTapped(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
+        public void SendItemsToSlidersWhenDoubleTapped(TextBox FrameSpeedBox, TextBox DelayBox, ListView FramesListView, Slider Eixo1Slider, Slider Eixo2Slider, Slider Eixo3Slider, Slider Eixo4Slider, Slider GarraSlider)
         {
             try
             {
@@ -87,7 +96,10 @@ namespace RobotArmAPP.Classes
                 FrameSpeedBox.Text = Convert.ToString(selectedArray[5]);
                 DelayBox.Text = Convert.ToString(selectedArray[6]);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("SendItemsToSlidersWhenDoubleTapped() Exception: " + ex.Message);
+            }
         }
     }
 }

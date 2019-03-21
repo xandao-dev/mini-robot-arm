@@ -49,7 +49,7 @@ namespace RobotArmAPP.Classes
             return null;
         }
 
-        public List<string> MovesToStringList()
+        /*public List<string> MovesToStringList()
         {
             List<string> Move = new List<string>
             {
@@ -62,9 +62,9 @@ namespace RobotArmAPP.Classes
                 delay.ToString()
             };
             return Move;
-        }
+        }*/
 
-        public List<int> MovesToIntList()
+        /*public List<int> MovesToIntList()
         {
             List<int> Move = new List<int>
             {
@@ -77,9 +77,9 @@ namespace RobotArmAPP.Classes
                 delay
             };
             return Move;
-        }
+        }*/
 
-        public string[] MovesToStringVector()
+        /*public string[] MovesToStringVector()
         {
             string[] Move = new string[7];
             Move[0] = garra.ToString();
@@ -91,7 +91,7 @@ namespace RobotArmAPP.Classes
             Move[6] = delay.ToString();
 
             return Move;
-        }
+        }*/
 
         public int[] MovesToIntVector()
         {

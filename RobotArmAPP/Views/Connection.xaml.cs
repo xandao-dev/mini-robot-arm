@@ -1,6 +1,8 @@
 ﻿using RobotArmAPP.Classes;
 using System;
+using System.Diagnostics;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -21,9 +23,17 @@ namespace RobotArmAPP.Views
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            wiFiAPConnection.RequestWifiAccess();
+            try
+            {
+                wiFiAPConnection.RequestWifiAccess();
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageDialog(ex.Message);
+                await dialog.ShowAsync();
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -42,30 +52,43 @@ namespace RobotArmAPP.Views
             BTN_Conectar.IsEnabled = false;
             BTN_Desconectar.IsEnabled = false;
 
-            if (await wiFiAPConnection.GetNetworkProfiles(true, true) == false)
-            {
-                status = await wiFiAPConnection.WifiStatus(false, true);
-                updateTexts.StatusTextAndColor(status,TXT_Status);
-                await wiFiAPConnection.ConnectToWifi();
-            }
-
             try
             {
-                status = await wiFiAPConnection.WifiStatus(false, false);
-                bool connected = await wiFiAPConnection.GetNetworkProfiles(true, false);
-                await wiFiAPConnection.WifiStatus(connected, true);
+                var isCorrectNetwork = await wiFiAPConnection.IsCorrectNetworkConnected(verifySSID: true, needDialog: true);
+
+                if (!isCorrectNetwork)
+                {
+                    status = await wiFiAPConnection.WifiStatus(isDisconnected: false, isConnecting: true);
+                    updateTexts.StatusTextAndColor(status, TXT_Status);
+                    try
+                    {
+                        await wiFiAPConnection.ConnectToWifi();
+                    }
+                    catch
+                    {
+                        var dialog = new MessageDialog("Check your WiFi network adapter and the Robotic Arm Access Point!", "Error");
+                        await dialog.ShowAsync();
+                    }
+                }
+
+                status = await wiFiAPConnection.WifiStatus(isDisconnected: false, isConnecting: false);
+                bool connected = await wiFiAPConnection.IsCorrectNetworkConnected(verifySSID: true, needDialog: false);
+                await wiFiAPConnection.WifiStatus(isDisconnected: connected, isConnecting: true);
                 updateTexts.StatusTextAndColor(status, TXT_Status);
+
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+                WifiCheckerTimer.Start();
+                BTN_Conectar.IsEnabled = true;
+                BTN_Desconectar.IsEnabled = true;
             }
             catch
             {
-                status = await wiFiAPConnection.WifiStatus(true, false);
+                status = await wiFiAPConnection.WifiStatus(isDisconnected: true, isConnecting: false);
                 updateTexts.StatusTextAndColor(status, TXT_Status);
+                var dialog = new MessageDialog("Check your WiFi network adapter!", "Error");
+                await dialog.ShowAsync();
             }
 
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-            WifiCheckerTimer.Start();
-            BTN_Conectar.IsEnabled = true;
-            BTN_Desconectar.IsEnabled = true;
         } //chama ConectarWifi, MudarTexto
 
         private async void BTN_Desconectar_Click(object sender, RoutedEventArgs e)
@@ -73,22 +96,18 @@ namespace RobotArmAPP.Views
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
             BTN_Conectar.IsEnabled = false;
             BTN_Desconectar.IsEnabled = false;
-            try
+            bool networkNotNull = await wiFiAPConnection.IsCorrectNetworkConnected(verifySSID: false, needDialog: false);
+            if (networkNotNull == true)
             {
-                bool networkNotNull = await wiFiAPConnection.GetNetworkProfiles(false, false);
-                if (networkNotNull == true)
-                {
-                    wiFiAPConnection.DisconnectWifi();
-                    status = await wiFiAPConnection.WifiStatus(true, false);
-                    updateTexts.StatusTextAndColor(status, TXT_Status);
-                }
-                else
-                {
-                    status = await wiFiAPConnection.WifiStatus(false, false);
-                    updateTexts.StatusTextAndColor(status, TXT_Status);
-                }
+                wiFiAPConnection.DisconnectWifi();
+                status = await wiFiAPConnection.WifiStatus(isDisconnected:true, isConnecting: false);
+                updateTexts.StatusTextAndColor(status, TXT_Status);
             }
-            catch { }
+            else
+            {
+                status = await wiFiAPConnection.WifiStatus(isDisconnected: false, isConnecting: false);
+                updateTexts.StatusTextAndColor(status, TXT_Status);
+            }
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
             BTN_Conectar.IsEnabled = true;
             BTN_Desconectar.IsEnabled = true;
@@ -96,7 +115,7 @@ namespace RobotArmAPP.Views
 
         private async void WifiCheckerTimer_Tick(object sender, object e) //Metodo do Timer para atualizar o Status do Wifi
         {
-            status = await wiFiAPConnection.WifiStatus(false, false);
+            status = await wiFiAPConnection.WifiStatus(isDisconnected: false, isConnecting: false);
             updateTexts.StatusTextAndColor(status, TXT_Status);
         }
     }

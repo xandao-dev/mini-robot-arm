@@ -97,13 +97,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\Blocker.cs" />
     <Compile Include="Classes\Controls.cs" />
+    <Compile Include="Classes\DelayControl.cs" />
     <Compile Include="Classes\Frames.cs" />
     <Compile Include="Classes\HTTPRequests.cs" />
     <Compile Include="Classes\JsonMovesSerializeAndDeserialize.cs" />
     <Compile Include="Classes\JsonSaverAndLoader.cs" />
     <Compile Include="Classes\Movement.cs" />
     <Compile Include="Classes\Playback.cs" />
+    <Compile Include="Classes\Reset.cs" />
+    <Compile Include="Classes\SpeedControl.cs" />
     <Compile Include="Classes\UpdateSlidersAndBoxes.cs" />
     <Compile Include="Classes\UpdateTexts.cs" />
     <Compile Include="MainPage.xaml.cs">

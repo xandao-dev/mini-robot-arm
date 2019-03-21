@@ -4,6 +4,7 @@ using System;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -38,11 +39,19 @@ namespace RobotArmAPP
             }
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             MenuGrid_Tapped(null, null);
 
-            wiFiAPConnection.RequestWifiAccess();
+            try
+            {
+                wiFiAPConnection.RequestWifiAccess();
+            }
+            catch(Exception ex)
+            {
+                var dialog = new MessageDialog(ex.ToString());
+                await dialog.ShowAsync();
+            }
 
             WifiCheckerTimer = new DispatcherTimer();
             WifiCheckerTimer.Tick += WifiCheckerTimer_Tick;

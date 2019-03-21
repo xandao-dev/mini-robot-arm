@@ -13,8 +13,8 @@ namespace RobotArmAPP.Views
 
     public sealed partial class Home : Page
     {
-        private static bool access = false;
-        public static string HomePassword { get; set; } = "crossbots";
+        private bool access = false;
+        public string HomePassword { get; set; } = "crossbots";
 
         public Home()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -22,12 +23,12 @@ namespace RobotArmAPP
 
         WiFiAdapter wifiAdapter;
 
-        /**/public async void RequestWifiAccess()
+        public async void RequestWifiAccess()
         {
             try
             {
-                var access = await WiFiAdapter.RequestAccessAsync();
-                if (access == WiFiAccessStatus.Allowed)
+                var wiFiaccess = await WiFiAdapter.RequestAccessAsync();
+                if (wiFiaccess == WiFiAccessStatus.Allowed)
                 {
                     var result = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
                     if (result.Count >= 1)
@@ -38,22 +39,29 @@ namespace RobotArmAPP
             }
             catch(Exception ex)
             {
-                var dialog = new MessageDialog(ex.ToString());
-                await dialog.ShowAsync();
-                //throw ex;
+                Debug.WriteLine("RequestWifiAccess() Exception: " + ex.Message);
+                throw;
             }
         }  //Method that needs to be called in the Page_Loaded or OnNavigatedTo function to request access to the wifi controls
 
         private async Task<string> VerifyAP(int appConnectionOK)
         {
-            HttpClient cliente = new HttpClient();
-            HttpResponseMessage response = new HttpResponseMessage();
-            string resultado = await cliente.GetStringAsync("http://10.10.10.10/?param=" + appConnectionOK);
-            string statusCode = response.StatusCode.ToString(); // Retorna "OK" quando da certo
-            return statusCode;
+            try
+            {
+                HttpClient cliente = new HttpClient();
+                HttpResponseMessage response = new HttpResponseMessage();
+                await cliente.GetStringAsync("http://10.10.10.10/?param=" + appConnectionOK);
+                string statusCode = response.StatusCode.ToString(); // Retorna "OK" quando da certo
+                return statusCode;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine("VerifyAP() Exception: " + ex.Message);
+                return null;
+            }
         } //Checks if ESP32 and computer are exchanging data
 
-       /**/ public async Task<bool> GetNetworkProfiles(bool verifySSID, bool needDialog)
+        public async Task<bool> IsCorrectNetworkConnected(bool verifySSID, bool needDialog)
         {
             try
             {
@@ -67,26 +75,24 @@ namespace RobotArmAPP
                     return currentNetwork != null;
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine("IsCorrectNetworkConnected() Exception: " + ex.Message);
                 if (needDialog == true)
                 {
-                    var dialog = new MessageDialog("Check your WiFi network adapter!", "Error");
-                    await dialog.ShowAsync();
-                    await WifiStatus(true, false);
+                    throw;
                 }
+                //await WifiStatus(isDisconnected: true, isConnecting: false);
                 return false;
             }
         } //Search the networks and call the wifistatus to see if it is the right network, if yes it returns true. 
 
         public async Task<Status> WifiStatus(bool isDisconnected, bool isConnecting)
         {
-            bool rightNetwork = await GetNetworkProfiles(true, false);
-            if (isConnecting == false)
-            {
-                if (rightNetwork == true && isDisconnected == false)
+                bool rightNetwork = await IsCorrectNetworkConnected(verifySSID: true, needDialog: false);
+                if (isConnecting == false)
                 {
-                    try
+                    if (rightNetwork == true && isDisconnected == false)
                     {
                         string code = await VerifyAP(200);
                         if (code == "OK")
@@ -94,21 +100,16 @@ namespace RobotArmAPP
                             return Status.Connected;
                         }
                     }
-                    catch
+                    else
                     {
                         return Status.Disconnected;
                     }
                 }
                 else
                 {
-                    return Status.Disconnected;
+                    return Status.Connecting;
                 }
-            }
-            else
-            {
-                return Status.Connecting;
-            }
-            return Status.Disconnected;
+                return Status.Disconnected;      
         } //Checks if the computer is connected to the ESP32 WiFi and call VerificarAP
 
         public async Task ConnectToWifi()
@@ -129,16 +130,16 @@ namespace RobotArmAPP
                     await wifiAdapter.ConnectAsync(network, reconnectionKind, credential); //a Connection
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                var dialog = new MessageDialog("Verifique seu adaptador de rede WiFi e o Access Point do Braço Robótico!", "Erro");
-                await dialog.ShowAsync();
+                Debug.WriteLine("ConnectToWifi() Exception: " + ex.Message);
+                throw;
             }
         } //Tries to connect to the esp32 WiFi AP
 
         public void DisconnectWifi()
         {
             wifiAdapter.Disconnect();
-        } //Tries to Disconnect the Wifi
+        } //Disconnect the Wifi
     }
 }

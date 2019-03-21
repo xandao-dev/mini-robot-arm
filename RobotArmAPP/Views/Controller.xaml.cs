@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Windows.System;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,19 +13,24 @@ namespace RobotArmAPP.Views
 {
     public sealed partial class Controller : Page
     {
-        #region VARIABLES and OBJECTS
+        #region VARIABLES
+        public const int numberOfControls = 5;
+
         public static bool okToSend = true;
         public static bool playing = false; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         public static bool changingControls = false;
         public bool liveBoxStatus = true; //Váriavel de leitura, mudar ela não altera a liveBoxStatus
-        public static int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
-        public static int currentFrame = 0;//usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
-        public static int[] currentFrameArray; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
 
-        public static List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
+        public static int repeatTimes = 0; // numero de repetiçoes das sequencias, essa variavel serve pra armazenar o valor original
+        public int currentFrame = 0;//usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
+
+        public static int[] currentFrameArray; //usado para funções de controle programaveis( SetPlayingStatus(),PlayAtTop,PlayFromSelected ... )
         #endregion
 
-        #region INSTANCE FIELDS
+        #region OBJECTS
+        public Slider[] SliderArray { get; set; }
+        public static List<int[]> framesList = new List<int[]>(); //Lista é um objeto que armazena variáveis
+
         private DispatcherTimer WifiCheckerTimer;
         private DispatcherTimer playbackTimer;
 
@@ -33,10 +39,13 @@ namespace RobotArmAPP.Views
         HTTPRequests httpRequests = new HTTPRequests();
         JsonSaverAndLoader jsonSaverAndLoader = new JsonSaverAndLoader();
         Controls controls = new Controls();
+        Blocker blocker = new Blocker();
+        Reset reset = new Reset();
+        DelayControl delayControl = new DelayControl();
         Frames frames = new Frames();
         Playback playback = new Playback();
-        Movement movement = new Movement(90,90,90,90,90,100,1000,0);
-        Movement defaultMovement = new Movement(90, 90, 90, 90, 90, 100, 1000,0);
+        Movement movement = new Movement(90, 90, 90, 90, 90, 100, 1000, 0);
+        Movement defaultMovement = new Movement(90, 90, 90, 90, 90, 100, 1000, 0);
         #endregion
 
         #region INITIALIZATION
@@ -47,15 +56,19 @@ namespace RobotArmAPP.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            wiFiAPConnection.RequestWifiAccess();
-            await jsonSaverAndLoader.JsonAutoLoader(FramesListView, RepeatTimesBox, movement, defaultMovement);
-            AssignMovementValues();//necessário
             try
             {
-                await httpRequests.ReadyToSend(200);
+                wiFiAPConnection.RequestWifiAccess();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                var dialog = new MessageDialog(ex.Message);
+                await dialog.ShowAsync();
+            }
 
+            await jsonSaverAndLoader.JsonAutoLoader(FramesListView, RepeatTimesBox, movement, defaultMovement);
+            AssignMovementValues();//necessário
+            await httpRequests.ReadyToSend(200);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -90,7 +103,7 @@ namespace RobotArmAPP.Views
         private async void Eixo1SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(1, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            controls.VerifySliderBoxValue(1, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, okToSend, movement);
         }
 
@@ -114,7 +127,7 @@ namespace RobotArmAPP.Views
         private async void Eixo2SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(2, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            controls.VerifySliderBoxValue(2, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, okToSend, movement);
         }
 
@@ -138,7 +151,7 @@ namespace RobotArmAPP.Views
         private async void Eixo3SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(3, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            controls.VerifySliderBoxValue(3, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, okToSend, movement);
         }
 
@@ -162,7 +175,7 @@ namespace RobotArmAPP.Views
         private async void Eixo4SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(4, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            controls.VerifySliderBoxValue(4, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, okToSend, movement);
         }
 
@@ -186,7 +199,7 @@ namespace RobotArmAPP.Views
         private async void GarraSliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(5, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider);
+            controls.VerifySliderBoxValue(5, Eixo1SliderBox, Eixo2SliderBox, Eixo3SliderBox, Eixo4SliderBox, GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, okToSend, movement);
         }
         #endregion
@@ -205,7 +218,7 @@ namespace RobotArmAPP.Views
         private async void FrameSpeedBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            await controls.BoxesMaxNumberLimiter(Controls.Control.FrameSpeedBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
+            await controls.BoxesMaxNumberLimiter(Controls.ControlsIndex.FrameSpeedBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
         }
 
 
@@ -222,13 +235,13 @@ namespace RobotArmAPP.Views
         private async void DelayBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            await controls.BoxesMaxNumberLimiter(Controls.Control.DelayBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
+            await controls.BoxesMaxNumberLimiter(Controls.ControlsIndex.DelayBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
         }
 
 
         private async void MinDelay_Click(object sender, RoutedEventArgs e)//CALCULADO APENAS PARA O MG995
         {
-            controls.SwitchMinimizeDelay(Controls.Delay.one, FrameSpeedBox, FramesListView, framesList, movement);
+            delayControl.SwitchMinimizeDelay(DelayControl.Delay.one, FramesListView, framesList, movement);
             AssignMovementValues();//necessário
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
@@ -236,12 +249,12 @@ namespace RobotArmAPP.Views
         private async void MinDelayAll_Click(object sender, RoutedEventArgs e)
         {
             changingControls = true;
-            controls.LockControls(true, true, Blocker1, Blocker2, Blocker3);
-            controls.SetStopButtonZIndex(false, Blocker2, StopPlayback);
-            controls.SwitchMinimizeDelay(Controls.Delay.all, FrameSpeedBox, FramesListView, framesList, movement);
+            blocker.BlockControls(Blocker.MouseCursor.Wait, locked: true, Blocker1, Blocker2, Blocker3);
+            blocker.SetStopButtonZIndex(false, Blocker2, StopPlayback);
+            delayControl.SwitchMinimizeDelay(DelayControl.Delay.all, FramesListView, framesList, movement);
             AssignMovementValues(); //necessário
             changingControls = false;
-            controls.LockControls(false, false, Blocker1, Blocker2, Blocker3);
+            blocker.BlockControls(Blocker.MouseCursor.Arrow, locked: false, Blocker1, Blocker2, Blocker3);
 
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
@@ -260,7 +273,7 @@ namespace RobotArmAPP.Views
         private async void RepeatTimesBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            await controls.BoxesMaxNumberLimiter(Controls.Control.RepeatTimesBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
+            await controls.BoxesMaxNumberLimiter(Controls.ControlsIndex.RepeatTimesBox, RepeatTimesBox, FrameSpeedBox, DelayBox);
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
         }
         #endregion
@@ -274,7 +287,7 @@ namespace RobotArmAPP.Views
 
         private async void ResetControlsButton_Click(object sender, RoutedEventArgs e)
         {
-            controls.ResetControls(Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, framesList, defaultMovement);
+            reset.ResetControls(Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, framesList, defaultMovement);
             await jsonSaverAndLoader.JsonAutoDeleter();
         }
 
@@ -317,7 +330,7 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = 0;
-            playback.SetPlayingStatus(true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            playback.SetPlayingStatus(onOff: true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
 
         private async void PlaySelected_Click(object sender, RoutedEventArgs e)
@@ -325,13 +338,13 @@ namespace RobotArmAPP.Views
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
             repeatTimes = Convert.ToInt32(RepeatTimesBox.Text);
             currentFrame = FramesListView.SelectedIndex;
-            playback.SetPlayingStatus(true, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            playback.SetPlayingStatus(onOff: true,playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
 
         private async void StopPlayback_Click(object sender, RoutedEventArgs e)
         {
             await jsonSaverAndLoader.JsonAutoSaver(RepeatTimesBox.Text);
-            playback.SetPlayingStatus(false, playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
+            playback.SetPlayingStatus(onOff: false,playbackTimer, Blocker1, Blocker2, Blocker3, StopPlayback);
         }
         #endregion
         
@@ -341,36 +354,53 @@ namespace RobotArmAPP.Views
             status = await wiFiAPConnection.WifiStatus(false, false);
             if (status == WiFiAPConnection.Status.Connected && playing != true && changingControls != true)
             {
-                controls.LockControls(null, false, Blocker1, Blocker2, Blocker3);
+                blocker.BlockControls(Blocker.MouseCursor.Null, locked: false, Blocker1, Blocker2, Blocker3);
             }
             else
             {
-                controls.LockControls(null, true, Blocker1, Blocker2, Blocker3);
+                blocker.BlockControls(Blocker.MouseCursor.Null, locked: true, Blocker1, Blocker2, Blocker3);
             }
 
             if (status != WiFiAPConnection.Status.Connected)
             {
-                controls.SetStopButtonZIndex(false, Blocker2, StopPlayback);
+                blocker.SetStopButtonZIndex(isButtonAhead: false, Blocker2, StopPlayback);
             }
             QuantidadeItens.Text = Convert.ToString(framesList.Count);
         } //Verifica o Wifi Para bloquear os Controles
 
         private void PlaybackTimer_Tick(object sender, object e)
         {
-            playback.FramePlayback(playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, Eixo1Slider, Eixo2Slider, Eixo3Slider, Eixo4Slider, GarraSlider, StopPlayback);
+            SliderArray = SlidersControls();
+            playback.FramePlayback(ref currentFrame, playbackTimer, Blocker1, Blocker2, Blocker3, RepeatTimesBox, FrameSpeedBox, DelayBox, FramesListView, SliderArray, StopPlayback);
         } // Timer que envia as sequencias no Play
         #endregion
 
         #region JSON - SAVE/OPEN
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            await jsonSaverAndLoader.SaveJsonWithFilePicker(RepeatTimesBox.Text);
+            try
+            {
+                await jsonSaverAndLoader.SaveJsonWithFilePicker(RepeatTimesBox.Text);
+            }
+            catch(Exception ex)
+            {
+                var dialog = new MessageDialog("Error saving the file.\n" + ex.Message);
+                await dialog.ShowAsync();
+            }
         }
 
         private async void Open_Click(object sender, RoutedEventArgs e)
         {
             okToSend = false;
-            await jsonSaverAndLoader.OpenJsonWithFilePicker(FramesListView, RepeatTimesBox,movement);
+            try
+            {
+                await jsonSaverAndLoader.OpenJsonWithFilePicker(FramesListView, RepeatTimesBox, movement);
+            }
+            catch
+            {
+                var dialog = new MessageDialog("File Invalid or Corrupted!", "Error");
+                await dialog.ShowAsync();
+            }
             AssignMovementValues();//necessário
             okToSend = true;
         }
@@ -390,6 +420,17 @@ namespace RobotArmAPP.Views
                 movement.delay = Convert.ToInt32(DelayBox.Text);
             }
             catch { }
+        }
+
+        public Slider[] SlidersControls()
+        {
+            Slider[] SliderArray = new Slider[numberOfControls] { GarraSlider, Eixo4Slider, Eixo3Slider, Eixo2Slider, Eixo1Slider };
+            //GarraSlider.Value = x;
+            /*for (int i = 0; i < numberOfControls; i++) 
+            {
+            
+            }*/
+            return SliderArray;
         }
         #endregion
     }
