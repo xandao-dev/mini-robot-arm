@@ -346,5 +346,13 @@
             Foreground="Black"
             Style="{StaticResource ButtonStyle1}"
             Visibility="Collapsed" />
+        <TextBlock
+            x:Name="wrongPasswordTXT"
+            Margin="687,452,422,0"
+            VerticalAlignment="Top"
+            Foreground="#FFFD1A1A"
+            Text="The password is incorrect."
+            TextWrapping="Wrap"
+            Visibility="Collapsed" />
     </Grid>
 </Page>

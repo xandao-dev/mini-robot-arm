@@ -61,11 +61,13 @@ namespace RobotArmAPP.Views
                 {
                     MainPage.LeftMenuAccess.IsEnabled = true;
                     access = true;
+                    wrongPasswordTXT.Visibility = Visibility.Collapsed;
                     blocker.LoginControlsHidden(isLogged: true, LogoutBTN, passwordBox, PasswordTXT);
                     passwordBox.Password = string.Empty;
                 }
                 else
                 {
+                    wrongPasswordTXT.Visibility = Visibility.Visible;
                     passwordBox.Password = string.Empty;
                 }
             }
@@ -76,7 +78,7 @@ namespace RobotArmAPP.Views
             MainPage.LeftMenuAccess.IsEnabled = false;
             access = false;
             blocker.LoginControlsHidden(isLogged: false, LogoutBTN, passwordBox, PasswordTXT);
-            passwordBox.Password = null;
+            passwordBox.Password = string.Empty;
             passwordBox.PlaceholderText = "Enter password";
         }
         #endregion

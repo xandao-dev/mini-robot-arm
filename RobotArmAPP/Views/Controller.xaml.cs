@@ -109,12 +109,7 @@ namespace RobotArmAPP.Views
         private async void Eixo1SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(Eixo1SliderBox,
-                                          Eixo2SliderBox,
-                                          Eixo3SliderBox,
-                                          Eixo4SliderBox,
-                                          GarraSliderBox,
-                                          axis: 1);
+            controls.VerifySliderBoxValue(Eixo1SliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, isOkToSendMoviments, movement);
         }
 
@@ -138,12 +133,7 @@ namespace RobotArmAPP.Views
         private async void Eixo2SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(Eixo1SliderBox,
-                                          Eixo2SliderBox,
-                                          Eixo3SliderBox,
-                                          Eixo4SliderBox,
-                                          GarraSliderBox,
-                                          axis: 2);
+            controls.VerifySliderBoxValue(Eixo2SliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, isOkToSendMoviments, movement);
         }
 
@@ -167,12 +157,7 @@ namespace RobotArmAPP.Views
         private async void Eixo3SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(Eixo1SliderBox,
-                                          Eixo2SliderBox,
-                                          Eixo3SliderBox,
-                                          Eixo4SliderBox,
-                                          GarraSliderBox,
-                                          axis: 3);
+            controls.VerifySliderBoxValue(Eixo3SliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, isOkToSendMoviments, movement);
         }
 
@@ -196,12 +181,7 @@ namespace RobotArmAPP.Views
         private async void Eixo4SliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(Eixo1SliderBox,
-                                          Eixo2SliderBox,
-                                          Eixo3SliderBox,
-                                          Eixo4SliderBox,
-                                          GarraSliderBox,
-                                          axis: 4);
+            controls.VerifySliderBoxValue(Eixo4SliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, isOkToSendMoviments, movement);
         }
 
@@ -225,12 +205,7 @@ namespace RobotArmAPP.Views
         private async void GarraSliderBox_LostFocus(object sender, RoutedEventArgs e)
         {
             AssignMovementValues();
-            controls.VerifySliderBoxValue(Eixo1SliderBox,
-                                          Eixo2SliderBox,
-                                          Eixo3SliderBox,
-                                          Eixo4SliderBox,
-                                          GarraSliderBox,
-                                          gripper: 1);
+            controls.VerifySliderBoxValue(GarraSliderBox);
             await controls.WhenSliderBoxLoseFocus(liveBoxStatus, isOkToSendMoviments, movement);
         }
         #endregion
