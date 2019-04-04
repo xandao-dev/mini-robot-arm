@@ -20,28 +20,29 @@ namespace RobotArmAPP.Classes
         public async Task JsonAutoSaver(string RepeatTimes)
         {
             if (Controller.framesList.Count <= 0)
-            {
                 return;
-            }
 
             try
             {
-                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("autoSaveRobot.json", CreationCollisionOption.ReplaceExisting);
-                CachedFileManager.DeferUpdates(autoSaveFile); //Evita outros programas editarem o arquivo enquanto ele está sendo gravado
+                var autoSaveFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("autoSaveRobot.json", CreationCollisionOption.ReplaceExisting);
+                CachedFileManager.DeferUpdates(autoSaveFile);
                 string repeatTimes = string.Format("{0:D5}", RepeatTimes);
                 await FileIO.WriteTextAsync(autoSaveFile, "{\"rpt\":" + repeatTimes + ",\"mov\":");
                 var json = JsonConvert.SerializeObject(Controller.framesList);
                 await FileIO.AppendTextAsync(autoSaveFile, json);
                 await FileIO.AppendTextAsync(autoSaveFile, "}");
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile); //permite que outros programas editem o arquivo
+                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(autoSaveFile);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("JsonAutoSaver() Exception: "+ex.Message);
+                Debug.WriteLine("JsonAutoSaver() Exception: " + ex.Message);
             }
         }
 
-        public async Task JsonAutoLoader(ListView FramesListView, TextBox RepeatTimesBox, Movement movement, Movement defaultMovement)
+        public async Task JsonAutoLoader(ListView FramesListView,
+                                         TextBox RepeatTimesBox,
+                                         Movement movement,
+                                         Movement defaultMovement)
         {
             if (App.FirstStart == false)
             {
@@ -51,7 +52,7 @@ namespace RobotArmAPP.Classes
                     await ConvertingJsonToList(file: autoSaveFile, isAutoSavedJson: true, FramesListView, RepeatTimesBox, movement);
                 }
                 catch
-                { 
+                {
                     Thread.Sleep(250);
                     await httpRequests.SendMovementToRobot(defaultMovement);
                 }
@@ -69,21 +70,16 @@ namespace RobotArmAPP.Classes
                         dialog.Commands.Add(new UICommand { Label = "No", Id = 1 });
                         var resposta = await dialog.ShowAsync();
                         if ((int)resposta.Id == 0)
-                        {
                             await ConvertingJsonToList(file: autoSaveFile, isAutoSavedJson: true, FramesListView, RepeatTimesBox, movement);
-
-                        }
                         else
-                        {
                             await JsonAutoDeleter();
-                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine("JsonAutoLoader() Exception: " + ex.Message);
                 }
-                Thread.Sleep(250);
+                //Thread.Sleep(250);
                 await httpRequests.SendMovementToRobot(defaultMovement);
             }
         }
@@ -92,11 +88,9 @@ namespace RobotArmAPP.Classes
         {
             try
             {
-                StorageFile autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
+                var autoSaveFile = await ApplicationData.Current.LocalFolder.GetFileAsync("autoSaveRobot.json");
                 if (autoSaveFile != null)
-                {
                     await autoSaveFile.DeleteAsync();
-                }
             }
             catch (Exception ex)
             {
@@ -134,17 +128,15 @@ namespace RobotArmAPP.Classes
         public async Task SaveJsonWithFilePicker(string RepeatTimes)
         {
             if (Controller.framesList.Count <= 0)
-            {
                 return;
-            }
 
-            FileSavePicker savePicker = new FileSavePicker
+            var savePicker = new FileSavePicker
             {
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary
             };
             savePicker.FileTypeChoices.Add("JSON File", new List<string>() { ".json" });
             savePicker.SuggestedFileName = "Frames";
-            StorageFile file = await savePicker.PickSaveFileAsync();
+            var file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
                 /*SERIALIZACAO MANUAL EM JSON*/
@@ -171,8 +163,8 @@ namespace RobotArmAPP.Classes
                     }
 
                     await FileIO.AppendTextAsync(file, "]}");
-                    FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file); //permite que outros programas editem o arquivo
-                                                                                                  /*FIM DA SERIALIZACAO MANUAL*/
+                    var status = await CachedFileManager.CompleteUpdatesAsync(file);
+                    /*FIM DA SERIALIZACAO MANUAL*/
                 }
                 catch (Exception ex)
                 {
@@ -183,7 +175,11 @@ namespace RobotArmAPP.Classes
         }
 
 
-        private async Task ConvertingJsonToList(StorageFile file, bool isAutoSavedJson, ListView FramesListView, TextBox RepeatTimesBox, Movement movement)
+        private async Task ConvertingJsonToList(StorageFile file,
+                                                bool isAutoSavedJson,
+                                                ListView FramesListView,
+                                                TextBox RepeatTimesBox,
+                                                Movement movement)
         {
             string text = await FileIO.ReadTextAsync(file);
             var moves = Moves.FromJson(text);
@@ -192,13 +188,13 @@ namespace RobotArmAPP.Classes
             {
                 for (int i = 0; i < moves.Movements.Count; i++)
                 {
-                    movement.garra = Convert.ToInt16(moves.Movements[i].Garra);
-                    movement.axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
-                    movement.axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
-                    movement.axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
-                    movement.axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
-                    movement.speed = Convert.ToInt16(moves.Movements[i].Speed);
-                    movement.delay = Convert.ToInt32(moves.Movements[i].Delay);
+                    movement.Garra = Convert.ToInt16(moves.Movements[i].Garra);
+                    movement.Axis4 = Convert.ToInt16(moves.Movements[i].Axis4);
+                    movement.Axis3 = Convert.ToInt16(moves.Movements[i].Axis3);
+                    movement.Axis2 = Convert.ToInt16(moves.Movements[i].Axis2);
+                    movement.Axis1 = Convert.ToInt16(moves.Movements[i].Axis1);
+                    movement.Speed = Convert.ToInt16(moves.Movements[i].Speed);
+                    movement.Delay = Convert.ToInt32(moves.Movements[i].Delay);
                     Controller.framesList.Add(movement.MovesToIntVector());
                     FramesListView.Items.Add(movement.MovesToString(Movement.StringType.allWithInfo));
                 }
@@ -209,13 +205,13 @@ namespace RobotArmAPP.Classes
             {
                 for (int i = 0; i < moves.Mov.Count; i++)
                 {
-                    movement.garra = Convert.ToInt16(moves.Mov[i][0].ToString());
-                    movement.axis4 = Convert.ToInt16(moves.Mov[i][1].ToString());
-                    movement.axis3 = Convert.ToInt16(moves.Mov[i][2].ToString());
-                    movement.axis2 = Convert.ToInt16(moves.Mov[i][3].ToString());
-                    movement.axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
-                    movement.speed = Convert.ToInt16(moves.Mov[i][5].ToString());
-                    movement.delay = Convert.ToInt32(moves.Mov[i][6].ToString());
+                    movement.Garra = Convert.ToInt16(moves.Mov[i][0].ToString());
+                    movement.Axis4 = Convert.ToInt16(moves.Mov[i][1].ToString());
+                    movement.Axis3 = Convert.ToInt16(moves.Mov[i][2].ToString());
+                    movement.Axis2 = Convert.ToInt16(moves.Mov[i][3].ToString());
+                    movement.Axis1 = Convert.ToInt16(moves.Mov[i][4].ToString());
+                    movement.Speed = Convert.ToInt16(moves.Mov[i][5].ToString());
+                    movement.Delay = Convert.ToInt32(moves.Mov[i][6].ToString());
                     Controller.framesList.Add(movement.MovesToIntVector());
                     FramesListView.Items.Add(movement.MovesToString(Movement.StringType.allWithInfo));
                 }

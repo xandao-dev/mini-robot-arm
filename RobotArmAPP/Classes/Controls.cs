@@ -31,35 +31,32 @@ namespace RobotArmAPP.Classes
             RepeatTimesBox
         }
 
-        public async Task SendSlidersValues(bool liveBoxStatus, bool okToSend, bool playing, Movement movement)
+        public async Task SendSlidersValues(bool liveBoxStatus, bool isOkToSendMoviments, bool isPlaying, Movement movement)
         {
             try
             {
-                if (liveBoxStatus == true && okToSend == true || playing == true)
-                {
-                     await httpRequests.SendMovementToRobot(movement);
-                }
+                if (liveBoxStatus == true && isOkToSendMoviments == true && isPlaying == true)
+                    await httpRequests.SendMovementToRobot(movement);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine("SendSlidersValues() Exception: " + ex.Message);
             }
         }
 
-        public async Task WhenSliderBoxLoseFocus(bool liveBoxStatus, bool okToSend, Movement movement)
+        public async Task WhenSliderBoxLoseFocus(bool liveBoxStatus, bool isOkToSendMoviments, Movement movement)
         {
-            if (liveBoxStatus == true && okToSend == true)
-            {
+            if (liveBoxStatus == true && isOkToSendMoviments == true)
                 await httpRequests.SendMovementToRobot(movement);
-            }
         }
 
-        public void VerifySliderBoxValue(int axis,
-                                         TextBox Eixo1SliderBox,
+        public void VerifySliderBoxValue(TextBox Eixo1SliderBox,
                                          TextBox Eixo2SliderBox,
                                          TextBox Eixo3SliderBox,
                                          TextBox Eixo4SliderBox,
-                                         TextBox GarraSliderBox)
+                                         TextBox GarraSliderBox,
+                                         int axis = 0,
+                                         int gripper = 0)
         {
             try
             {
@@ -93,7 +90,10 @@ namespace RobotArmAPP.Classes
                         else if (Convert.ToDouble(Eixo4SliderBox.Text) <= 0.0)
                             Eixo4SliderBox.Text = "0";
                         break;
-                    case 5:
+                }
+                switch (gripper)
+                {
+                    case 1:
                         GarraSliderBox.UpdateLayout();
                         if (Convert.ToDouble(GarraSliderBox.Text) >= 180.0)
                             GarraSliderBox.Text = "180";
@@ -172,9 +172,7 @@ namespace RobotArmAPP.Classes
         public void BoxFocusOut(KeyRoutedEventArgs e, Page ControllerPage)
         {
             if (e.Key == VirtualKey.Enter)
-            {
                 ControllerPage.Focus(FocusState.Programmatic);
-            }
         }
     }
 }

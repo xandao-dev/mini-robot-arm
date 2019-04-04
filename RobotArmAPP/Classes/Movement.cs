@@ -8,24 +8,25 @@ namespace RobotArmAPP.Classes
 {
     class Movement
     {
-        public int garra;
-        public int axis4;
-        public int axis3;
-        public int axis2;
-        public int axis1;
-        public int speed;
-        public int delay;
-        public int repeatTimes;
+        public int Garra { get; set; }
+        public int Axis4 { get; set; }
+        public int Axis3 { get; set; }
+        public int Axis2 { get; set; }
+        public int Axis1 { get; set; }
+        public int Speed { get; set; }
+        public int Delay { get; set; }
+        public int RepeatTimes { get; set; }
 
-        public Movement(int garra, int axis4, int axis3, int axis2, int axis1, int speed, int delay, int repeatTimes) {
-            this.garra = garra;
-            this.axis4 = axis4;
-            this.axis3 = axis3;
-            this.axis2 = axis2;
-            this.axis1 = axis1;
-            this.speed = speed;
-            this.delay = delay;
-            this.repeatTimes = repeatTimes;
+        public Movement(int garra, int axis4, int axis3, int axis2, int axis1, int speed, int delay, int repeatTimes)
+        {
+            this.Garra = garra;
+            this.Axis4 = axis4;
+            this.Axis3 = axis3;
+            this.Axis2 = axis2;
+            this.Axis1 = axis1;
+            this.Speed = speed;
+            this.Delay = delay;
+            this.RepeatTimes = repeatTimes;
         }
 
         public enum StringType
@@ -40,29 +41,43 @@ namespace RobotArmAPP.Classes
             switch (stringType)
             {
                 case StringType.all:
-                    return garra + "," + axis4 + "," + axis3 + "," + axis2 + "," + axis1 + "," + speed + "," + delay;
+                    return this.Garra + "," + this.Axis4 + "," + this.Axis3 + "," + this.Axis2 + "," + this.Axis1 + "," + this.Speed + "," + this.Delay;
                 case StringType.allWithInfo:
-                    return "["+garra.ToString("000") + "," + axis4.ToString("000") + "," + axis3.ToString("000") + "," + axis2.ToString("000") + "," + axis1.ToString("000") + "] Speed: " + speed.ToString("000") + ", Delay: " + delay.ToString("000000") + "ms";
+                    return "[" + this.Garra.ToString("000") + "," + this.Axis4.ToString("000") + "," + this.Axis3.ToString("000") + "," + this.Axis2.ToString("000") + "," + this.Axis1.ToString("000") + "] Speed: " + this.Speed.ToString("000") + ", Delay: " + this.Delay.ToString("000000") + "ms";
                 case StringType.onlyAxis:
-                    return garra + "," + axis4 + "," + axis3 + "," + axis2 + "," + axis1;
+                    return this.Garra + "," + this.Axis4 + "," + this.Axis3 + "," + this.Axis2 + "," + this.Axis1;
             }
             return null;
         }
 
-        /*public List<string> MovesToStringList()
+        public int[] MovesToIntVector()
         {
-            List<string> Move = new List<string>
-            {
-                garra.ToString(),
-                axis4.ToString(),
-                axis3.ToString(),
-                axis2.ToString(),
-                axis1.ToString(),
-                speed.ToString(),
-                delay.ToString()
-            };
+            int[] Move = new int[7];
+            Move[0] = this.Garra;
+            Move[1] = this.Axis4;
+            Move[2] = this.Axis3;
+            Move[3] = this.Axis2;
+            Move[4] = this.Axis1;
+            Move[5] = this.Speed;
+            Move[6] = this.Delay;
+
             return Move;
-        }*/
+        }
+
+        /*public List<string> MovesToStringList()
+{
+    List<string> Move = new List<string>
+    {
+        garra.ToString(),
+        axis4.ToString(),
+        axis3.ToString(),
+        axis2.ToString(),
+        axis1.ToString(),
+        speed.ToString(),
+        delay.ToString()
+    };
+    return Move;
+}*/
 
         /*public List<int> MovesToIntList()
         {
@@ -92,19 +107,5 @@ namespace RobotArmAPP.Classes
 
             return Move;
         }*/
-
-        public int[] MovesToIntVector()
-        {
-            int[] Move = new int[7];
-            Move[0] = garra;
-            Move[1] = axis4;
-            Move[2] = axis3;
-            Move[3] = axis2;
-            Move[4] = axis1;
-            Move[5] = speed;
-            Move[6] = delay;
-
-            return Move;
-        }
     }
 }

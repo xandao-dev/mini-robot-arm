@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotArmAPP.Classes;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -11,6 +12,11 @@ namespace RobotArmAPP
 {
     class WiFiAPConnection
     {
+        WiFiAdapter wifiAdapter;
+        HTTPRequests httpRequests = new HTTPRequests();
+        private WiFiAccessStatus wiFiaccess;
+        private AdaptersStatus adapterStatus = new AdaptersStatus();
+
         public string SSID { get; set; } = "robotarm";
         public string Password { get; set; } = "0xcrossbots";
 
@@ -20,126 +26,112 @@ namespace RobotArmAPP
             Connected,
             Connecting
         }
+        public enum AdaptersStatus
+        {
+            noAdapters,
+            hasAdapters
+        }
 
-        WiFiAdapter wifiAdapter;
-
-        public async void RequestWifiAccess()
+        public async Task RequestWifiAccess()
         {
             try
             {
-                var wiFiaccess = await WiFiAdapter.RequestAccessAsync();
-                if (wiFiaccess == WiFiAccessStatus.Allowed)
-                {
-                    var result = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
-                    if (result.Count >= 1)
-                    {
-                        wifiAdapter = await WiFiAdapter.FromIdAsync(result[0].Id);
-                    }
-                }
+                wiFiaccess = await WiFiAdapter.RequestAccessAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine("RequestWifiAccess() Exception: " + ex.Message);
                 throw;
             }
-        }  //Method that needs to be called in the Page_Loaded or OnNavigatedTo function to request access to the wifi controls
+        }
 
-        private async Task<string> VerifyAP(int appConnectionOK)
+        public async Task<AdaptersStatus> GetWifiAdaptors()
         {
             try
             {
-                HttpClient cliente = new HttpClient();
-                HttpResponseMessage response = new HttpResponseMessage();
-                await cliente.GetStringAsync("http://10.10.10.10/?param=" + appConnectionOK);
-                string statusCode = response.StatusCode.ToString(); // Retorna "OK" quando da certo
-                return statusCode;
+                if (wiFiaccess == WiFiAccessStatus.Allowed)
+                {
+                    var wifiAdaptersColletion = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
+                    if (wifiAdaptersColletion.Count >= 1)
+                    {
+                        wifiAdapter = await WiFiAdapter.FromIdAsync(wifiAdaptersColletion[0].Id);
+                        return AdaptersStatus.hasAdapters;
+                    }
+                }
+                return AdaptersStatus.noAdapters;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("VerifyAP() Exception: " + ex.Message);
-                return null;
+                Debug.WriteLine("RequestWifiAccess() Exception: " + ex.Message);
+                //return AdaptersStatus.hasAdapters;
+                throw;
             }
-        } //Checks if ESP32 and computer are exchanging data
+        }
 
-        public async Task<bool> IsCorrectNetworkConnected(bool verifySSID, bool needDialog)
+        public async Task<bool> IsCorrectNetworkConnected(bool needVerifySSID, bool needErrorDialog)
         {
             try
             {
                 var currentNetwork = await wifiAdapter.NetworkAdapter.GetConnectedProfileAsync();
-                if (verifySSID == true)
-                {
+                if (needVerifySSID == true)
                     return (currentNetwork != null && currentNetwork.ProfileName == SSID);
-                }
                 else
-                {
                     return currentNetwork != null;
-                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine("IsCorrectNetworkConnected() Exception: " + ex.Message);
-                if (needDialog == true)
-                {
+                if (needErrorDialog == true)
                     throw;
-                }
-                //await WifiStatus(isDisconnected: true, isConnecting: false);
                 return false;
             }
-        } //Search the networks and call the wifistatus to see if it is the right network, if yes it returns true. 
+        }
 
-        public async Task<Status> WifiStatus(bool isDisconnected, bool isConnecting)
+        public async Task<Status> WifiConnectionStatus(bool isDisconnected, bool isConnecting)
         {
-                bool rightNetwork = await IsCorrectNetworkConnected(verifySSID: true, needDialog: false);
-                if (isConnecting == false)
-                {
-                    if (rightNetwork == true && isDisconnected == false)
-                    {
-                        string code = await VerifyAP(200);
-                        if (code == "OK")
-                        {
-                            return Status.Connected;
-                        }
-                    }
-                    else
-                    {
-                        return Status.Disconnected;
-                    }
-                }
+            bool rightNetwork = await IsCorrectNetworkConnected(needVerifySSID: true, needErrorDialog: false);
+            if (rightNetwork == true)
+            {
+                if (isDisconnected == true)
+                    return Status.Disconnected;
+                else if (isConnecting)
+                    return Status.Connecting;
                 else
                 {
-                    return Status.Connecting;
+                    string code = await httpRequests.VerifyWifiAPConnection();
+                    if (code == "OK")
+                        return Status.Connected;
                 }
-                return Status.Disconnected;      
-        } //Checks if the computer is connected to the ESP32 WiFi and call VerificarAP
+            }
+            return Status.Disconnected;
+        }
 
         public async Task ConnectToWifi()
         {
             try
             {
-                var result = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
-                if (result.Count >= 1)
+                if ((adapterStatus = await GetWifiAdaptors()) == AdaptersStatus.hasAdapters)
                 {
-                    wifiAdapter = await WiFiAdapter.FromIdAsync(result[0].Id);
-                    await wifiAdapter.ScanAsync();// escaneando redes
-                    var network = wifiAdapter.NetworkReport.AvailableNetworks.Where(y => y.Ssid == SSID).FirstOrDefault(); //verificando a rede
-                    var credential = new PasswordCredential //senha
+                    await wifiAdapter.ScanAsync();
+                    var network = wifiAdapter.NetworkReport.AvailableNetworks.Where(y => y.Ssid == SSID).FirstOrDefault();
+                    var credential = new PasswordCredential
                     {
                         Password = this.Password
                     };
-                    WiFiReconnectionKind reconnectionKind = WiFiReconnectionKind.Automatic; //tipo de Connection
-                    await wifiAdapter.ConnectAsync(network, reconnectionKind, credential); //a Connection
+                    WiFiReconnectionKind reconnectionKind = WiFiReconnectionKind.Automatic;
+                    await wifiAdapter.ConnectAsync(network, reconnectionKind, credential);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine("ConnectToWifi() Exception: " + ex.Message);
                 throw;
             }
-        } //Tries to connect to the esp32 WiFi AP
+        }
 
         public void DisconnectWifi()
         {
             wifiAdapter.Disconnect();
-        } //Disconnect the Wifi
+        }
     }
 }

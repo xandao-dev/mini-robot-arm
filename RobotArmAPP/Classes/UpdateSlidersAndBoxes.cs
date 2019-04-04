@@ -9,30 +9,18 @@ namespace RobotArmAPP.Classes
 {
     class UpdateSlidersAndBoxes
     {
-        Slider GarraSlider;
-        Slider Eixo4Slider;
-        Slider Eixo3Slider;
-        Slider Eixo2Slider;
-        Slider Eixo1Slider;
-        TextBox GarraSliderBox;
-        TextBox Eixo4SliderBox;
-        TextBox Eixo3SliderBox;
-        TextBox Eixo2SliderBox;
-        TextBox Eixo1SliderBox;
-        TextBox FrameSpeedBox;
-        TextBox DelayBox;
-        TextBox RepeatTimesBox;
+        Slider GarraSlider, Eixo4Slider, Eixo3Slider, Eixo2Slider, Eixo1Slider;
+        TextBox GarraSliderBox, Eixo4SliderBox, Eixo3SliderBox, Eixo2SliderBox, Eixo1SliderBox;
+        TextBox FrameSpeedBox, DelayBox, RepeatTimesBox;
 
-        double garra;
-        double axis4;
-        double axis3;
-        double axis2;
-        double axis1;
-        int speed;
-        int delay;
-        int repeatTimes;
+        double garra, axis4, axis3, axis2, axis1;
+        int speed, delay, repeatTimes;
 
-        public UpdateSlidersAndBoxes(Slider GarraSlider, Slider Eixo4Slider, Slider Eixo3Slider, Slider Eixo2Slider, Slider Eixo1Slider)
+        public UpdateSlidersAndBoxes(Slider GarraSlider,
+                                     Slider Eixo4Slider,
+                                     Slider Eixo3Slider,
+                                     Slider Eixo2Slider,
+                                     Slider Eixo1Slider)
         {
             this.GarraSlider = GarraSlider;
             this.Eixo4Slider = Eixo4Slider;
@@ -41,7 +29,14 @@ namespace RobotArmAPP.Classes
             this.Eixo1Slider = Eixo1Slider;
         }
 
-        public UpdateSlidersAndBoxes(TextBox GarraSliderBox, TextBox Eixo4SliderBox, TextBox Eixo3SliderBox, TextBox Eixo2SliderBox, TextBox Eixo1SliderBox, TextBox FrameSpeedBox, TextBox DelayBox, TextBox RepeatTimesBox)
+        public UpdateSlidersAndBoxes(TextBox GarraSliderBox,
+                                     TextBox Eixo4SliderBox,
+                                     TextBox Eixo3SliderBox,
+                                     TextBox Eixo2SliderBox,
+                                     TextBox Eixo1SliderBox,
+                                     TextBox FrameSpeedBox,
+                                     TextBox DelayBox,
+                                     TextBox RepeatTimesBox)
         {
             this.GarraSliderBox = GarraSliderBox;
             this.Eixo4SliderBox = Eixo4SliderBox;

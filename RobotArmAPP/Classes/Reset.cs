@@ -21,14 +21,14 @@ namespace RobotArmAPP.Classes
                                   List<int[]> framesList,
                                   Movement defaultMovement)
         {
-            Eixo1Slider.Value = defaultMovement.axis1;
-            Eixo2Slider.Value = defaultMovement.axis2;
-            Eixo3Slider.Value = defaultMovement.axis3;
-            Eixo4Slider.Value = defaultMovement.axis4;
-            GarraSlider.Value = defaultMovement.garra;
-            FrameSpeedBox.Text = Convert.ToString(defaultMovement.speed);
-            DelayBox.Text = Convert.ToString(defaultMovement.delay);
-            RepeatTimesBox.Text = Convert.ToString(defaultMovement.repeatTimes);
+            Eixo1Slider.Value = defaultMovement.Axis1;
+            Eixo2Slider.Value = defaultMovement.Axis2;
+            Eixo3Slider.Value = defaultMovement.Axis3;
+            Eixo4Slider.Value = defaultMovement.Axis4;
+            GarraSlider.Value = defaultMovement.Garra;
+            FrameSpeedBox.Text = Convert.ToString(defaultMovement.Speed);
+            DelayBox.Text = Convert.ToString(defaultMovement.Delay);
+            RepeatTimesBox.Text = Convert.ToString(defaultMovement.RepeatTimes);
             FramesListView.Items.Clear();
             framesList.Clear();
         }

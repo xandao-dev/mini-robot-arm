@@ -16,7 +16,7 @@ namespace RobotArmAPP.Classes
         {
             try
             {
-                string MovesToString =  movement.MovesToString(Movement.StringType.allWithInfo);
+                string MovesToString = movement.MovesToString(Movement.StringType.allWithInfo);
                 int[] MovesInVector = movement.MovesToIntVector();
 
                 if (FramesListView.SelectedItems.Count > 0)
@@ -57,9 +57,7 @@ namespace RobotArmAPP.Classes
         public void DeleteFrameFunction(ListView FramesListView)
         {
             if (FramesListView.SelectedItems.Count <= 0)
-            {
                 return;
-            }
 
             int selected = FramesListView.SelectedIndex;
             Controller.framesList.RemoveAt(selected);
@@ -75,7 +73,7 @@ namespace RobotArmAPP.Classes
                 {
                     FramesListView.SelectedIndex = selected - 1;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Debug.WriteLine("DeleteFrameFunction() Exception: " + ex.Message);
                 }

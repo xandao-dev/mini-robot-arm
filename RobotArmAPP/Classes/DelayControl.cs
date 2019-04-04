@@ -27,13 +27,13 @@ namespace RobotArmAPP.Classes
         public string SelectedFrameToString(int index, int delay, Movement movement)
         {
             int[] selectedArray = Controller.framesList[index];
-            movement.garra = selectedArray[0];
-            movement.axis4 = selectedArray[1];
-            movement.axis3 = selectedArray[2];
-            movement.axis2 = selectedArray[3];
-            movement.axis1 = selectedArray[4];
-            movement.speed = selectedArray[5];
-            movement.delay = delay;
+            movement.Garra = selectedArray[0];
+            movement.Axis4 = selectedArray[1];
+            movement.Axis3 = selectedArray[2];
+            movement.Axis2 = selectedArray[3];
+            movement.Axis1 = selectedArray[4];
+            movement.Speed = selectedArray[5];
+            movement.Delay = delay;
             return movement.MovesToString(Movement.StringType.allWithInfo);
         }
 
@@ -43,9 +43,7 @@ namespace RobotArmAPP.Classes
                                         Movement movement)
         {
             if (framesList.Count <= 0)
-            {
                 return;
-            }
 
             switch (delay)
             {
@@ -70,9 +68,7 @@ namespace RobotArmAPP.Classes
                                            Movement movement)
         {
             if (framesList.Count <= 0)
-            {
                 return;
-            }
 
             FramesListView.SelectedIndex = selected;
             int index = FramesListView.SelectedIndex;
@@ -97,7 +93,7 @@ namespace RobotArmAPP.Classes
                     int garradifference = Math.Abs(selectedArray[4] - lastArray[4]);
 
                     int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                    int delayMin = (biggest * (MinimumForMG995/180)) * 100 / speed;
+                    int delayMin = (biggest * (MinimumForMG995 / 180)) * 100 / speed;
 
                     framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
                     FramesListView.Items.Insert(selected, SelectedFrameToString(index, delayMin, movement));
@@ -118,7 +114,7 @@ namespace RobotArmAPP.Classes
                 int garradifference = Math.Abs(selectedArray[4] - previousArray[4]);
 
                 int biggest = Math.Max(Math.Max(Math.Max(eixo1difference, eixo2difference), eixo3difference), Math.Max(eixo4difference, garradifference));
-                int delayMin = (biggest * (MinimumForMG995/180)) * 100 / speed;
+                int delayMin = (biggest * (MinimumForMG995 / 180)) * 100 / speed;
 
                 framesList[selected] = new int[] { selectedArray[0], selectedArray[1], selectedArray[2], selectedArray[3], selectedArray[4], selectedArray[5], delayMin };
                 FramesListView.Items.Insert(selected, SelectedFrameToString(index, delayMin, movement));
@@ -130,14 +126,12 @@ namespace RobotArmAPP.Classes
         public List<int[]> MinimumAxisDelay(List<int[]> framesList)
         {
             int numberOfItems = framesList.Count;
-            
+
             if (numberOfItems <= 0)
-            {
                 return null;
-            }
-            for(int i=0;i < numberOfItems; i++)
+            for (int i = 0; i < numberOfItems; i++)
             {
-                
+
                 currentArray = framesList[i];
                 lastArray = framesList[framesList.Count - 1];
 
@@ -145,27 +139,27 @@ namespace RobotArmAPP.Classes
                 {
                     previousArray = framesList[i - 1];
                     int speed = currentArray[5];
-                    int eixo1delay = (Math.Abs(currentArray[0] - previousArray[0]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo2delay = (Math.Abs(currentArray[1] - previousArray[1]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo3delay = (Math.Abs(currentArray[2] - previousArray[2]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo4delay = (Math.Abs(currentArray[3] - previousArray[3]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int garradelay = (Math.Abs(currentArray[4] - previousArray[4]) * (MinimumForMG995 / 180)) *100 / speed;
+                    int eixo1delay = (Math.Abs(currentArray[0] - previousArray[0]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo2delay = (Math.Abs(currentArray[1] - previousArray[1]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo3delay = (Math.Abs(currentArray[2] - previousArray[2]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo4delay = (Math.Abs(currentArray[3] - previousArray[3]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int garradelay = (Math.Abs(currentArray[4] - previousArray[4]) * (MinimumForMG995 / 180)) * 100 / speed;
                     int[] differenceVector = new int[6] { garradelay, eixo4delay, eixo3delay, eixo2delay, eixo1delay, speed };
                     axisDelayList.Add(differenceVector);
-                    
+
                 }
                 else
                 {
                     int speed = currentArray[5];
-                    int eixo1delay = (Math.Abs(currentArray[0] - lastArray[0]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo2delay = (Math.Abs(currentArray[1] - lastArray[1]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo3delay = (Math.Abs(currentArray[2] - lastArray[2]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int eixo4delay = (Math.Abs(currentArray[3] - lastArray[3]) * (MinimumForMG995 / 180)) *100 / speed;
-                    int garradelay = (Math.Abs(currentArray[4] - lastArray[4]) * (MinimumForMG995 / 180)) *100 / speed;
+                    int eixo1delay = (Math.Abs(currentArray[0] - lastArray[0]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo2delay = (Math.Abs(currentArray[1] - lastArray[1]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo3delay = (Math.Abs(currentArray[2] - lastArray[2]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int eixo4delay = (Math.Abs(currentArray[3] - lastArray[3]) * (MinimumForMG995 / 180)) * 100 / speed;
+                    int garradelay = (Math.Abs(currentArray[4] - lastArray[4]) * (MinimumForMG995 / 180)) * 100 / speed;
                     int[] differenceVector = new int[6] { garradelay, eixo4delay, eixo3delay, eixo2delay, eixo1delay, speed };
                     axisDelayList.Add(differenceVector);
                 }
-                
+
             }
             return axisDelayList;
         }

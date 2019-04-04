@@ -1,4 +1,6 @@
-﻿using Windows.System;
+﻿using RobotArmAPP.Classes;
+using Windows.System;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -13,9 +15,16 @@ namespace RobotArmAPP.Views
 
     public sealed partial class Home : Page
     {
-        private bool access = false;
+        #region VARIABLES
+        private static bool access = false;
         public string HomePassword { get; set; } = "crossbots";
+        #endregion
 
+        #region OBJECTS
+        Blocker blocker = new Blocker();
+        #endregion
+
+        #region INITIALIZATION
         public Home()
         {
             this.InitializeComponent();
@@ -36,7 +45,9 @@ namespace RobotArmAPP.Views
                 passwordBox.Visibility = Visibility.Collapsed;
             }
         }
+        #endregion
 
+        #region CONTROLS
         private void PasswordBox_Loaded(object sender, RoutedEventArgs e)
         {
             passwordBox.Focus(FocusState.Programmatic);
@@ -50,14 +61,12 @@ namespace RobotArmAPP.Views
                 {
                     MainPage.LeftMenuAccess.IsEnabled = true;
                     access = true;
-                    LogoutBTN.Visibility = Visibility.Visible;
-                    passwordBox.Visibility = Visibility.Collapsed;
-                    PasswordTXT.Visibility = Visibility.Collapsed;
-                    passwordBox.Password = "";
+                    blocker.LoginControlsHidden(isLogged: true, LogoutBTN, passwordBox, PasswordTXT);
+                    passwordBox.Password = string.Empty;
                 }
                 else
                 {
-                    passwordBox.Password = "";
+                    passwordBox.Password = string.Empty;
                 }
             }
         }
@@ -66,10 +75,10 @@ namespace RobotArmAPP.Views
         {
             MainPage.LeftMenuAccess.IsEnabled = false;
             access = false;
-            LogoutBTN.Visibility = Visibility.Collapsed;
-            passwordBox.Visibility = Visibility.Visible;
-            PasswordTXT.Visibility = Visibility.Visible;
+            blocker.LoginControlsHidden(isLogged: false, LogoutBTN, passwordBox, PasswordTXT);
+            passwordBox.Password = null;
             passwordBox.PlaceholderText = "Enter password";
         }
+        #endregion
     }
 }

@@ -10,35 +10,16 @@ using Windows.UI.Xaml.Shapes;
 
 namespace RobotArmAPP.Classes
 {
-    class Blocker
+    partial class Blocker
     {
-        public enum MouseCursor
+        public void BlockControls(bool locked, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3)
         {
-            Wait,
-            Arrow,
-            Null
-        }
-
-        public void BlockControls(MouseCursor mouseCursor, bool locked, Rectangle Blocker1, Rectangle Blocker2, Rectangle Blocker3)
-        {
-            switch (mouseCursor)
-            {
-                case MouseCursor.Wait:
-                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 1);
-                    break;
-                case MouseCursor.Arrow:
-                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-                    break;
-                default:
-                    break;
-            }
-
             switch (locked)
             {
                 case true:
-                    Blocker1.Visibility = Visibility.Visible;
-                    Blocker2.Visibility = Visibility.Visible;
-                    Blocker3.Visibility = Visibility.Visible;
+                    //Blocker1.Visibility = Visibility.Visible;
+                    //Blocker2.Visibility = Visibility.Visible;
+                    //Blocker3.Visibility = Visibility.Visible;
                     break;
                 case false:
                     Blocker1.Visibility = Visibility.Collapsed;
@@ -48,7 +29,7 @@ namespace RobotArmAPP.Classes
             }
         }
 
-        public void SetStopButtonZIndex(bool isButtonAhead, Rectangle Blocker2, Button StopPlayback)
+        public void SetStopButtonZIndexToBlock(bool isButtonAhead, Rectangle Blocker2, Button StopPlayback)
         {
             if (isButtonAhead == true)
             {
@@ -59,6 +40,25 @@ namespace RobotArmAPP.Classes
             {
                 Canvas.SetZIndex(StopPlayback, 1);
                 Canvas.SetZIndex(Blocker2, 2);
+            }
+        }
+    }
+
+    partial class Blocker
+    {
+        public void LoginControlsHidden(bool isLogged, Button LogoutBTN, PasswordBox passwordBox, TextBlock PasswordTXT)
+        {
+            if (isLogged == true)
+            {
+                LogoutBTN.Visibility = Visibility.Visible;
+                passwordBox.Visibility = Visibility.Collapsed;
+                PasswordTXT.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                LogoutBTN.Visibility = Visibility.Collapsed;
+                passwordBox.Visibility = Visibility.Visible;
+                PasswordTXT.Visibility = Visibility.Visible;
             }
         }
     }

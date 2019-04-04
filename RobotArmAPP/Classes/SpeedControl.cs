@@ -9,7 +9,7 @@ namespace RobotArmAPP.Classes
     class SpeedControl
     {
         DelayControl delayControl = new DelayControl();
-        public async Task<int> GarraSpeedControl()
+        /*public async Task<int> GarraSpeedControl()
         {
 
             return 0;
@@ -37,6 +37,6 @@ namespace RobotArmAPP.Classes
         {
 
             return 0;
-        }
+        }*/
     }
 }
