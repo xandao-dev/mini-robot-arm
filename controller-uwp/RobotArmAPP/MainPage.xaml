@@ -1,0 +1,190 @@
+﻿<Page
+    x:Class="RobotArmAPP.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RobotArmAPP"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:triggers="using:WindowsStateTriggers"
+    DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=MainViewModel}"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="Page_SizeChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="39*" />
+            <ColumnDefinition Width="281*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ToggleButton
+                x:Name="TogglePaneButton"
+                AutomationProperties.Name="Menu"
+                Background="#FF151515"
+                IsChecked="{Binding IsPaneOpen, ElementName=NavigationPane, Mode=TwoWay}"
+                Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                TabIndex="1"
+                ToolTipService.ToolTip="Menu" />
+
+            <Grid Grid.Column="1" Background="#F2F2F2">
+                <TextBlock
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="22"
+                    Text="{Binding SelectedMenuItem.Title}" />
+                <TextBlock
+                    Width="50"
+                    Margin="1150,15,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    FontSize="16"
+                    Text="Status:"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="TXT_StatusGlobal"
+                    Margin="1200,15,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    x:FieldModifier="public"
+                    FocusVisualPrimaryBrush="White"
+                    FocusVisualSecondaryBrush="#99FFFFFF"
+                    FontSize="16"
+                    Foreground="Red"
+                    Text="Desconectado"
+                    TextWrapping="Wrap"
+                    Visibility="Visible" />
+            </Grid>
+
+        </Grid>
+
+        <SplitView
+            x:Name="NavigationPane"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            CompactPaneLength="48"
+            DisplayMode="Inline"
+            IsPaneOpen="False"
+            OpenPaneLength="215">
+            <SplitView.Pane>
+
+                <ListView
+                    x:Name="LeftMenu"
+                    Grid.Row="1"
+                    x:FieldModifier="public"
+                    Background="#FF1F1F1F"
+                    ItemContainerStyle="{StaticResource MenuListViewItem}"
+                    ItemsSource="{Binding MenuItems}"
+                    SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}">
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                x:Name="MenuGrid"
+                                Margin="0"
+                                Background="Transparent"
+                                Tapped="MenuGrid_Tapped">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="48" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <SymbolIcon
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Symbol="{Binding SymbolIcon}"
+                                        ToolTipService.ToolTip="{Binding Title}" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Text="{Binding Title}"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                </Grid>
+
+                                <Border
+                                    Grid.Row="1"
+                                    Height="2"
+                                    Margin="0"
+                                    VerticalAlignment="Bottom"
+                                    Background="White"
+                                    BorderBrush="White"
+                                    BorderThickness="0,0,0,1" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </SplitView.Pane>
+            <SplitView.Content>
+
+                <Frame x:Name="FrameContent" Background="Black">
+                    <Frame.ContentTransitions>
+                        <TransitionCollection>
+                            <NavigationThemeTransition>
+                                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                    <EntranceNavigationTransitionInfo />
+                                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                            </NavigationThemeTransition>
+                        </TransitionCollection>
+                    </Frame.ContentTransitions>
+                </Frame>
+
+            </SplitView.Content>
+        </SplitView>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1300" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NavigationPane.DisplayMode" Value="CompactOverlay" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NavigationPane.DisplayMode" Value="CompactOverlay" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NavigationPane.DisplayMode" Value="Overlay" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <triggers:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NavigationPane.DisplayMode" Value="Overlay" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
