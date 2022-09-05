@@ -3,14 +3,14 @@
   <h3 align="center">Mini Robot Arm</h3>
 
   <p align="center">
-	4 Axis Robot Arm using ESP32 DevKit V1 and controlled by UWP desktop application
+	4 Axis Robot Arm using ESP32 DevKit V1 and controlled by UWP desktop application.
     <br />
 	<br />
-    <a href="https://github.com/xandao6/mini-robot-arm"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/xandao-dev/mini-robot-arm"><strong>Explore the docs »</strong></a>
     <br />
-    <a href="https://github.com/xandao6/mini-robot-arm/issue">Report Bug</a>
+    <a href="https://github.com/xandao-dev/mini-robot-arm/issue">Report Bug</a>
     ·
-    <a href="https://github.com/xandao6/mini-robot-arm/issues">Request Feature</a>
+    <a href="https://github.com/xandao-dev/mini-robot-arm/issues">Request Feature</a>
   </p>
 </p>
 
@@ -36,7 +36,7 @@
 ## About The Project
 
 <div align="center">
-  <a href="https://github.com/xandao6/mini-robot-arm">
+  <a href="https://github.com/xandao-dev/mini-robot-arm">
     <img src="./assets/mini-robot-arm.jpg" alt="4 axis robot arm">
     <img src="./assets/home.png" alt="UWP Home Page">
     <img src="./assets/connection.png" alt="UWP Connection Page">
@@ -61,7 +61,7 @@ https://user-images.githubusercontent.com/22106326/188293880-0bb325d2-1152-44dc-
 
 ## Roadmap
 
-See the [open issues](https://github.com/xandao6/mini-robot-arm/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/xandao-dev/mini-robot-arm/issues) for a list of proposed features (and known issues).
 
 ## Contributing
 
@@ -81,6 +81,6 @@ Free software =)
 
 ## Contact
 
-Alexandre Calil - [@xandao6](https://www.linkedin.com/in/xandao6/) - alexandrecalilmf@gmail.com
+Alexandre Calil - [@xandao-dev](https://www.linkedin.com/in/xandao-dev/) - alexandrecalilmf@gmail.com
 
-Project Link: [https://github.com/xandao6/mini-robot-arm](https://github.com/xandao6/mini-robot-arm)
+Project Link: [https://github.com/xandao-dev/mini-robot-arm](https://github.com/xandao-dev/mini-robot-arm)
